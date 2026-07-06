@@ -23,7 +23,7 @@
     --text-faint: #454951;
     --mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
     --sans: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
- 
+
     background: var(--bg-void);
     color: var(--text-primary);
     font-family: var(--sans);
@@ -34,7 +34,7 @@
   #relay-root .mono { font-family: var(--mono); }
   #relay-root .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px 0; }
   #relay-root .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 22px 24px; }
- 
+
   /* ---------- header ---------- */
   #relay-root .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
   #relay-root .brand { display: flex; align-items: baseline; gap: 10px; }
@@ -48,7 +48,7 @@
   #relay-root .led.grey { background: var(--text-faint); animation: none; }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);} 70%{box-shadow:0 0 0 6px rgba(79,209,197,0);} 100%{box-shadow:0 0 0 0 rgba(79,209,197,0);} }
   #relay-root .clock { font-family: var(--mono); font-size: 13px; letter-spacing: 0.05em; }
- 
+
   /* ---------- body layout: slim nav + content ---------- */
   #relay-root .body-row { display: flex; max-width: 1260px; margin: 0 auto; }
   #relay-root .navrail {
@@ -62,12 +62,12 @@
   }
   #relay-root .navrail a:hover { color: var(--text-dim); }
   #relay-root .navrail a.active { color: var(--amber); border-left-color: var(--amber); }
- 
+
   #relay-root .wrap { flex: 1; min-width: 0; padding: 0 28px 60px 28px; }
   #relay-root .eyebrow { margin-top: 0; }
   #relay-root section { padding-top: 26px; scroll-margin-top: 20px; }
   #relay-root section + section { margin-top: 8px; border-top: 1px solid var(--border-faint); }
- 
+
   /* ---------- hero / pnl ---------- */
   #relay-root .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; margin-top: 18px; }
   #relay-root .pnl-value { font-family: var(--mono); font-size: 48px; font-weight: 600; line-height: 1; color: var(--cyan); margin: 6px 0 4px 0; }
@@ -77,7 +77,7 @@
   #relay-root .stat .num { font-family: var(--mono); font-size: 18px; }
   #relay-root .stat .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; }
   #relay-root .spark-wrap svg { width: 100%; height: 110px; display: block; }
- 
+
   /* ---------- gauges ---------- */
   #relay-root .gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; }
   #relay-root .gauge-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
@@ -87,11 +87,11 @@
   #relay-root .gauge-track { position: relative; height: 22px; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 2px; overflow: hidden; }
   #relay-root .gauge-fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--cyan) 0%, var(--amber) 75%, var(--red) 100%); width: 0%; transition: width 1s cubic-bezier(.2,.8,.2,1); }
   #relay-root .gauge-caption { display: flex; justify-content: space-between; margin-top: 6px; font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
- 
+
   #relay-root .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
   #relay-root .section-title { font-family: var(--sans); font-weight: 600; font-size: 19px; margin: 0; }
   #relay-root .section-meta { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
- 
+
   /* ---------- strategies ---------- */
   #relay-root .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
   #relay-root .strat-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
@@ -103,14 +103,14 @@
   #relay-root .strat-bottom { display: flex; justify-content: space-between; margin-top: 8px; align-items: center; }
   #relay-root .strat-status { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
   #relay-root .strat-last { font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
- 
+
   #relay-root .toggle { position: relative; width: 30px; height: 16px; flex-shrink: 0; }
   #relay-root .toggle input { opacity: 0; width: 0; height: 0; }
   #relay-root .toggle .track { position: absolute; inset: 0; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 20px; cursor: pointer; transition: background 0.2s; }
   #relay-root .toggle .track::before { content: ""; position: absolute; width: 10px; height: 10px; left: 2px; top: 2px; background: var(--text-faint); border-radius: 50%; transition: transform 0.2s, background 0.2s; }
   #relay-root .toggle input:checked + .track { background: rgba(79,209,197,0.12); border-color: var(--cyan); }
   #relay-root .toggle input:checked + .track::before { transform: translateX(14px); background: var(--cyan); }
- 
+
   /* ---------- risk (compact, inline, global only) ---------- */
   #relay-root .risk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px; }
   #relay-root .risk-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
@@ -130,7 +130,7 @@
   #relay-root .save-msg.show { opacity: 1; }
   #relay-root .btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--amber); color: #171000; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-weight: 700; }
   #relay-root .btn:hover { filter: brightness(1.08); }
- 
+
   /* ---------- feed ---------- */
   #relay-root .feed-panel { padding: 0; overflow: hidden; }
   #relay-root .feed-row { display: grid; grid-template-columns: 90px 100px 70px 80px 60px 1fr; gap: 10px; padding: 10px 18px; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-faint); align-items: center; }
@@ -142,9 +142,9 @@
   #relay-root .feed-action.sell { color: var(--amber); }
   #relay-root .feed-action.close { color: var(--text-dim); }
   #relay-root .feed-status.filled { color: var(--cyan); }
- 
+
   #relay-root .footnote { margin-top: 28px; font-family: var(--mono); font-size: 11px; color: var(--text-faint); display: flex; justify-content: space-between; }
- 
+
   @media (max-width: 900px) {
     #relay-root .navrail { display: none; }
     #relay-root .hero { grid-template-columns: 1fr; }
@@ -152,14 +152,14 @@
     #relay-root .risk-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
- 
+
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
- 
+
 <script>
 (function(){
   const root = document.getElementById('relay-root');
- 
+
   const strategies = [
     { id:'nq-don', name:'NQ-DON', engine:'Donchian + Macro Filter', status:'live', last:'2m ago', spark:[4,6,5,8,7,9,11,10,13,12,14,16] },
     { id:'nq-dyr', name:'NQ-DYR', engine:'Dynamic Regression Trend', status:'live', last:'14m ago', spark:[10,9,11,8,7,9,6,7,5,6,4,5] },
@@ -169,17 +169,17 @@
   for (let i = 5; i <= 14; i++) {
     strategies.push({ id:'pending-'+i, name:'STRAT-'+String(i).padStart(2,'0'), engine:'Not uploaded yet', status:'pending', last:'not connected', spark:[7,7,7,7,7,7,7,7,7,7,7,7] });
   }
- 
+
   // Real signals load from the backend now (see loadSignals() below) — no
   // more hardcoded fake feed here.
- 
+
   const accountEquity = 106250.40, accountStart = 105000.00;
   let risk = { perTrade: 1.0, dailyLoss: 5.0, maxDrawdown: 10.0, maxPositions: 3 };
- 
+
   // Point this at your real Railway backend URL.
   const BACKEND_URL = 'https://relay-backend-production-5260.up.railway.app';
   let backtestCache = {}; // strategyId -> { uploadedAt, stats, equityCurve }
- 
+
   function sparkline(data, color, w, h) {
     const max = Math.max(...data), min = Math.min(...data);
     const range = (max - min) || 1;
@@ -192,7 +192,7 @@
     return sparkline(data, '#4FD1C5', 400, 110);
   }
   function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}); }
- 
+
   const stratCards = strategies.map(s => `
     <div class="strat-card ${s.status==='pending'?'pending':''}" data-strat-card="${s.id}">
       <div class="strat-top">
@@ -207,9 +207,9 @@
       </div>
     </div>
   `).join('');
- 
+
   // (Signal log now loads real data from the backend — see loadSignals() below)
- 
+
   root.innerHTML = `
     <div class="topbar">
       <div class="brand"><span class="mark">RE<span>LAY</span></span><span class="sub">FTMO \u00b7 MT5 Bridge</span></div>
@@ -219,7 +219,7 @@
         <div class="clock mono" id="clock">--:--:--</div>
       </div>
     </div>
- 
+
     <div class="body-row">
       <div class="navrail">
         <a href="#sec-overview" data-target="sec-overview" class="active">Overview</a>
@@ -228,7 +228,7 @@
         <a href="#sec-risk" data-target="sec-risk">Risk</a>
         <a href="#sec-log" data-target="sec-log">Signal log</a>
       </div>
- 
+
       <div class="wrap">
         <section id="sec-overview">
           <p class="eyebrow">Account performance <span style="color:var(--text-faint); text-transform:none; letter-spacing:0;">— sample data, not yet connected to your real MT5 account</span></p>
@@ -250,7 +250,7 @@
               <div class="pnl-sub">Peak equity ${fmt(accountEquity)} on Jul 5</div>
             </div>
           </div>
- 
+
           <div class="gauges">
             <div class="panel">
               <div class="gauge-head"><span class="gauge-title">Daily loss limit</span><span class="gauge-figure"><b>$420</b> of <span id="daily-limit-fig">${fmt(accountEquity*risk.dailyLoss/100)}</span> used</span></div>
@@ -264,7 +264,7 @@
             </div>
           </div>
         </section>
- 
+
         <section id="sec-strategies">
           <div class="section-head">
             <h2 class="section-title">Strategies</h2>
@@ -272,7 +272,7 @@
           </div>
           <div class="strat-grid">${stratCards}</div>
         </section>
- 
+
         <section id="sec-backtest">
           <div class="section-head">
             <h2 class="section-title">Backtest</h2>
@@ -309,7 +309,7 @@
             </div>
           </div>
         </section>
- 
+
         <section id="sec-risk">
           <div class="section-head">
             <h2 class="section-title">Risk</h2>
@@ -345,7 +345,7 @@
             </div>
           </div>
         </section>
- 
+
         <section id="sec-log">
           <div class="section-head">
             <h2 class="section-title">Signal log</h2>
@@ -356,16 +356,16 @@
             <div id="log-rows"><div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Loading\u2026</span></div></div>
           </div>
         </section>
- 
+
         <div class="footnote"><span>RELAY \u2014 design preview, sample data</span><span>Broker: FTMO \u00b7 MT5</span></div>
       </div>
     </div>
   `;
- 
+
   // clock
   function tick() { const el = root.querySelector('#clock'); if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false }); }
   tick(); setInterval(tick, 1000);
- 
+
   // gauges animate in
   requestAnimationFrame(() => {
     setTimeout(() => {
@@ -373,7 +373,7 @@
       if (d) d.style.width = '8%'; if (m) m.style.width = '17.7%';
     }, 150);
   });
- 
+
   // risk inputs live compute
   const perTrade = root.querySelector('#risk-per-trade');
   const dailyLoss = root.querySelector('#risk-daily-loss');
@@ -389,15 +389,15 @@
     root.querySelector('#risk-max-dd-computed').textContent = v;
     root.querySelector('#maxdd-limit-fig').textContent = v;
   });
- 
+
   const killToggle = root.querySelector('#kill-toggle');
   killToggle.addEventListener('change', () => {
     root.querySelector('#kill-led').classList.toggle('grey', !killToggle.checked);
     root.querySelector('#kill-label').textContent = killToggle.checked ? 'Trading enabled' : 'Trading paused';
   });
- 
+
   root.querySelector('#save-risk').addEventListener('click', saveRisk);
- 
+
   loadRisk();
   loadSignals();
   wireStrategyToggles();
@@ -407,11 +407,11 @@
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 1800);
   });
- 
+
   // ---------------------------------------------------------------------
   // SIGNAL LOG: load real signals from the backend
   // ---------------------------------------------------------------------
- 
+
   function statusFor(entry) {
     if (entry.forwarded?.reason === 'trading paused') return { label: 'blocked \u2014 trading paused', cls: '' };
     if (entry.forwarded?.reason === 'strategy paused') return { label: 'blocked \u2014 strategy paused', cls: '' };
@@ -420,7 +420,7 @@
     if (entry.forwarded?.error) return { label: 'error', cls: '' };
     return { label: 'received', cls: '' };
   }
- 
+
   async function loadSignals() {
     const meta = root.querySelector('#log-meta');
     const rowsEl = root.querySelector('#log-rows');
@@ -451,11 +451,11 @@
       meta.textContent = 'Backend unreachable';
     }
   }
- 
+
   // ---------------------------------------------------------------------
   // RISK: load real settings from backend, save real settings to backend
   // ---------------------------------------------------------------------
- 
+
   async function loadRisk() {
     try {
       const res = await fetch(BACKEND_URL + '/risk');
@@ -465,7 +465,7 @@
       risk.dailyLoss = data.dailyLossLimitPercent;
       risk.maxDrawdown = data.maxDrawdownPercent;
       risk.maxPositions = data.maxOpenPositions;
- 
+
       root.querySelector('#risk-per-trade').value = risk.perTrade;
       root.querySelector('#risk-daily-loss').value = risk.dailyLoss;
       root.querySelector('#risk-max-dd').value = risk.maxDrawdown;
@@ -475,7 +475,7 @@
       root.querySelector('#daily-limit-fig').textContent = fmt(accountEquity * risk.dailyLoss / 100);
       root.querySelector('#risk-max-dd-computed').textContent = fmt(accountStart * risk.maxDrawdown / 100);
       root.querySelector('#maxdd-limit-fig').textContent = fmt(accountStart * risk.maxDrawdown / 100);
- 
+
       const killToggle = root.querySelector('#kill-toggle');
       killToggle.checked = data.tradingEnabled;
       root.querySelector('#kill-led').classList.toggle('grey', !data.tradingEnabled);
@@ -484,7 +484,7 @@
       console.warn('Could not load risk settings from backend:', err.message);
     }
   }
- 
+
   async function saveRisk() {
     const payload = {
       tradingEnabled: root.querySelector('#kill-toggle').checked,
@@ -510,11 +510,11 @@
     msg.classList.add('show');
     setTimeout(() => msg.classList.remove('show'), 2200);
   }
- 
+
   // ---------------------------------------------------------------------
   // STRATEGY PAUSE TOGGLES: wire to real backend overrides
   // ---------------------------------------------------------------------
- 
+
   function wireStrategyToggles() {
     root.querySelectorAll('[data-strat-toggle]').forEach(toggle => {
       toggle.addEventListener('change', async () => {
@@ -538,7 +538,7 @@
       });
     });
   }
- 
+
   function findColumn(headers, patterns) {
     for (const p of patterns) {
       const hit = headers.find(h => p.test(h));
@@ -546,17 +546,17 @@
     }
     return null;
   }
- 
+
   function computeBacktestFromCsv(rows) {
     const headers = Object.keys(rows[0] || {});
     const cumulCol = findColumn(headers, [/cumulative profit.*(?!%)/i, /cum.*p&?l/i]) ||
                      headers.find(h => /cumulative/i.test(h) && !/%/.test(h));
     const profitCol = headers.find(h => /^profit$/i.test(h.trim())) ||
                        headers.find(h => /profit/i.test(h) && !/%/.test(h) && !/cumulative/i.test(h));
- 
+
     let equityCurve = [];
     let perTradeProfits = [];
- 
+
     if (cumulCol) {
       equityCurve = rows.map((r, i) => ({ i, v: parseFloat(String(r[cumulCol]).replace(/[^0-9.\-]/g, '')) || 0 }));
     }
@@ -567,9 +567,9 @@
         equityCurve = perTradeProfits.map((p, i) => { running += p; return { i, v: running }; });
       }
     }
- 
+
     if (!equityCurve.length) return null;
- 
+
     const netProfit = equityCurve.length ? equityCurve[equityCurve.length - 1].v : 0;
     const wins = perTradeProfits.filter(p => p > 0);
     const losses = perTradeProfits.filter(p => p < 0);
@@ -577,14 +577,14 @@
     const grossProfit = wins.reduce((a, b) => a + b, 0);
     const grossLoss = Math.abs(losses.reduce((a, b) => a + b, 0));
     const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : (grossProfit > 0 ? Infinity : null);
- 
+
     let peak = -Infinity, maxDD = 0;
     equityCurve.forEach(pt => {
       if (pt.v > peak) peak = pt.v;
       const dd = peak - pt.v;
       if (dd > maxDD) maxDD = dd;
     });
- 
+
     return {
       stats: {
         netProfit,
@@ -596,25 +596,25 @@
       equityCurve: equityCurve.map(p => p.v),
     };
   }
- 
+
   function renderBacktest(strategyId) {
     const data = backtestCache[strategyId];
     const empty = root.querySelector('#backtest-empty');
     const content = root.querySelector('#backtest-content');
     const updated = root.querySelector('#backtest-updated');
- 
+
     if (!data) {
       empty.style.display = '';
       content.style.display = 'none';
       updated.textContent = 'No data uploaded yet';
       return;
     }
- 
+
     empty.style.display = 'none';
     content.style.display = '';
     const d = new Date(data.uploadedAt);
     updated.textContent = 'Last updated ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
- 
+
     root.querySelector('#backtest-spark').innerHTML = sparkline(data.equityCurve.length > 1 ? data.equityCurve : [0, 0], '#4FD1C5', 600, 120);
     root.querySelector('#bt-net').textContent = (data.stats.netProfit >= 0 ? '+' : '') + fmt(data.stats.netProfit);
     root.querySelector('#bt-net').style.color = data.stats.netProfit >= 0 ? 'var(--cyan)' : 'var(--red)';
@@ -622,7 +622,7 @@
     root.querySelector('#bt-pf').textContent = data.stats.profitFactor != null && isFinite(data.stats.profitFactor) ? data.stats.profitFactor.toFixed(2) : (data.stats.profitFactor === Infinity ? '\u221e' : '\u2014');
     root.querySelector('#bt-dd').textContent = fmt(data.stats.maxDrawdown);
   }
- 
+
   async function loadAllBacktests() {
     try {
       const res = await fetch(BACKEND_URL + '/backtest');
@@ -635,7 +635,7 @@
     const select = root.querySelector('#backtest-strat-select');
     if (select) renderBacktest(select.value);
   }
- 
+
   async function saveBacktest(strategyId, parsed) {
     try {
       await fetch(BACKEND_URL + '/backtest/' + strategyId, {
@@ -649,11 +649,11 @@
     backtestCache[strategyId] = { uploadedAt: new Date().toISOString(), ...parsed };
     renderBacktest(strategyId);
   }
- 
+
   const backtestSelect = root.querySelector('#backtest-strat-select');
   const backtestUploadBtn = root.querySelector('#backtest-upload-btn');
   const backtestFileInput = root.querySelector('#backtest-csv-input');
- 
+
   backtestSelect.addEventListener('change', () => renderBacktest(backtestSelect.value));
   backtestUploadBtn.addEventListener('click', () => backtestFileInput.click());
   backtestFileInput.addEventListener('change', (e) => {
@@ -674,9 +674,9 @@
     });
     backtestFileInput.value = '';
   });
- 
+
   loadAllBacktests();
- 
+
   // scroll-spy nav
   const navLinks = root.querySelectorAll('.navrail a');
   const sections = root.querySelectorAll('section');
