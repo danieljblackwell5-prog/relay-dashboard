@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RELAY — FTMO / MT5 Bridge Dashboard</title>
+</head>
+<body style="margin:0;">
+<div id="relay-root"></div>
+<style>
+  #relay-root {
+    --bg-void: #0A0B0D;
+    --bg-panel: #14161A;
+    --bg-raised: #1C1F24;
+    --border-subtle: #262931;
+    --border-faint: #1E2126;
+    --amber: #FF9F1C;
+    --amber-dim: #8A5E15;
+    --cyan: #4FD1C5;
+    --red: #FF5A5A;
+    --text-primary: #EDEBE6;
+    --text-dim: #7C828C;
+    --text-faint: #454951;
+    --mono: 'IBM Plex Mono', 'SFMono-Regular', monospace;
+    --sans: 'IBM Plex Sans Condensed', 'Arial Narrow', sans-serif;
+ 
+    background: var(--bg-void);
+    color: var(--text-primary);
+    font-family: var(--sans);
+    min-height: 100vh;
+    box-sizing: border-box;
+  }
+  #relay-root *, #relay-root *::before, #relay-root *::after { box-sizing: border-box; }
+  #relay-root .mono { font-family: var(--mono); }
+  #relay-root .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px 0; }
+  #relay-root .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 22px 24px; }
+ 
+  /* ---------- header ---------- */
+  #relay-root .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
+  #relay-root .brand { display: flex; align-items: baseline; gap: 10px; }
+  #relay-root .brand .mark { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: 0.08em; }
+  #relay-root .brand .mark span { color: var(--amber); }
+  #relay-root .brand .sub { font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; color: var(--text-dim); text-transform: uppercase; border-left: 1px solid var(--border-subtle); padding-left: 10px; }
+  #relay-root .topbar-right { display: flex; align-items: center; gap: 22px; }
+  #relay-root .status-chip { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  #relay-root .led { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); animation: pulse 2.4s infinite; flex-shrink: 0; }
+  #relay-root .led.amber { background: var(--amber); }
+  #relay-root .led.grey { background: var(--text-faint); animation: none; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);} 70%{box-shadow:0 0 0 6px rgba(79,209,197,0);} 100%{box-shadow:0 0 0 0 rgba(79,209,197,0);} }
+  #relay-root .clock { font-family: var(--mono); font-size: 13px; letter-spacing: 0.05em; }
+ 
+  /* ---------- body layout: slim nav + content ---------- */
+  #relay-root .body-row { display: flex; max-width: 1260px; margin: 0 auto; }
+  #relay-root .navrail {
+    width: 150px; flex-shrink: 0; padding: 28px 0 0 28px;
+    position: sticky; top: 0; align-self: flex-start; height: 100vh;
+  }
+  #relay-root .navrail a {
+    display: block; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text-faint); text-decoration: none; padding: 8px 0 8px 12px; border-left: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  #relay-root .navrail a:hover { color: var(--text-dim); }
+  #relay-root .navrail a.active { color: var(--amber); border-left-color: var(--amber); }
+ 
+  #relay-root .wrap { flex: 1; min-width: 0; padding: 0 28px 60px 28px; }
+  #relay-root .eyebrow { margin-top: 0; }
+  #relay-root section { padding-top: 26px; scroll-margin-top: 20px; }
+  #relay-root section + section { margin-top: 8px; border-top: 1px solid var(--border-faint); }
+ 
+  /* ---------- hero / pnl ---------- */
+  #relay-root .hero { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; margin-top: 18px; }
+  #relay-root .pnl-value { font-family: var(--mono); font-size: 48px; font-weight: 600; line-height: 1; color: var(--cyan); margin: 6px 0 4px 0; }
+  #relay-root .pnl-sub { font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  #relay-root .stat-row { display: flex; gap: 28px; margin-top: 20px; border-top: 1px solid var(--border-faint); padding-top: 16px; }
+  #relay-root .stat { display: flex; flex-direction: column; gap: 4px; }
+  #relay-root .stat .num { font-family: var(--mono); font-size: 18px; }
+  #relay-root .stat .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; color: var(--text-faint); text-transform: uppercase; }
+  #relay-root .spark-wrap svg { width: 100%; height: 110px; display: block; }
+ 
+  /* ---------- gauges ---------- */
+  #relay-root .gauges { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; }
+  #relay-root .gauge-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  #relay-root .gauge-title { font-family: var(--mono); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+  #relay-root .gauge-figure { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
+  #relay-root .gauge-figure b { color: var(--text-primary); font-weight: 600; }
+  #relay-root .gauge-track { position: relative; height: 22px; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 2px; overflow: hidden; }
+  #relay-root .gauge-fill { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--cyan) 0%, var(--amber) 75%, var(--red) 100%); width: 0%; transition: width 1s cubic-bezier(.2,.8,.2,1); }
+  #relay-root .gauge-caption { display: flex; justify-content: space-between; margin-top: 6px; font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
+ 
+  #relay-root .section-head { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 16px; }
+  #relay-root .section-title { font-family: var(--sans); font-weight: 600; font-size: 19px; margin: 0; }
+  #relay-root .section-meta { font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+ 
+  /* ---------- strategies ---------- */
+  #relay-root .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  #relay-root .strat-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
+  #relay-root .strat-card.pending { opacity: 0.5; }
+  #relay-root .strat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  #relay-root .strat-name { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  #relay-root .strat-engine { font-family: var(--mono); font-size: 10px; color: var(--text-faint); margin-bottom: 8px; }
+  #relay-root .strat-spark svg { width: 100%; height: 26px; display: block; }
+  #relay-root .strat-bottom { display: flex; justify-content: space-between; margin-top: 8px; align-items: center; }
+  #relay-root .strat-status { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em; }
+  #relay-root .strat-last { font-family: var(--mono); font-size: 10px; color: var(--text-faint); }
+ 
+  #relay-root .toggle { position: relative; width: 30px; height: 16px; flex-shrink: 0; }
+  #relay-root .toggle input { opacity: 0; width: 0; height: 0; }
+  #relay-root .toggle .track { position: absolute; inset: 0; background: var(--bg-raised); border: 1px solid var(--border-subtle); border-radius: 20px; cursor: pointer; transition: background 0.2s; }
+  #relay-root .toggle .track::before { content: ""; position: absolute; width: 10px; height: 10px; left: 2px; top: 2px; background: var(--text-faint); border-radius: 50%; transition: transform 0.2s, background 0.2s; }
+  #relay-root .toggle input:checked + .track { background: rgba(79,209,197,0.12); border-color: var(--cyan); }
+  #relay-root .toggle input:checked + .track::before { transform: translateX(14px); background: var(--cyan); }
+ 
+  /* ---------- risk (compact, inline, global only) ---------- */
+  #relay-root .risk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px; }
+  #relay-root .risk-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
+  #relay-root .risk-box .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+  #relay-root .risk-input-row { display: flex; align-items: baseline; gap: 6px; }
+  #relay-root .risk-input {
+    width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border-subtle);
+    color: var(--text-primary); font-family: var(--mono); font-size: 20px; padding: 2px 0; outline: none;
+  }
+  #relay-root .risk-input:focus { border-color: var(--amber-dim); }
+  #relay-root .risk-suffix { font-family: var(--mono); font-size: 13px; color: var(--text-dim); }
+  #relay-root .risk-computed { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+  #relay-root .risk-computed b { color: var(--cyan); }
+  #relay-root .risk-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 16px; }
+  #relay-root .kill-mini { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
+  #relay-root .save-msg { font-family: var(--mono); font-size: 12px; color: var(--cyan); opacity: 0; transition: opacity 0.3s; }
+  #relay-root .save-msg.show { opacity: 1; }
+  #relay-root .btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--amber); color: #171000; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-weight: 700; }
+  #relay-root .btn:hover { filter: brightness(1.08); }
+ 
+  /* ---------- feed ---------- */
+  #relay-root .feed-panel { padding: 0; overflow: hidden; }
+  #relay-root .feed-row { display: grid; grid-template-columns: 90px 100px 70px 80px 60px 1fr; gap: 10px; padding: 10px 18px; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-faint); align-items: center; }
+  #relay-root .feed-row.head { color: var(--text-faint); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; background: var(--bg-raised); }
+  #relay-root .feed-row:last-child { border-bottom: none; }
+  #relay-root .feed-time { color: var(--text-dim); }
+  #relay-root .feed-action { text-transform: uppercase; font-weight: 600; }
+  #relay-root .feed-action.buy { color: var(--cyan); }
+  #relay-root .feed-action.sell { color: var(--amber); }
+  #relay-root .feed-action.close { color: var(--text-dim); }
+  #relay-root .feed-status.filled { color: var(--cyan); }
+ 
+  #relay-root .footnote { margin-top: 28px; font-family: var(--mono); font-size: 11px; color: var(--text-faint); display: flex; justify-content: space-between; }
+ 
+  @media (max-width: 900px) {
+    #relay-root .navrail { display: none; }
+    #relay-root .hero { grid-template-columns: 1fr; }
+    #relay-root .gauges { grid-template-columns: 1fr; }
+    #relay-root .risk-grid { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+ 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+ 
+<script>
+(function(){
+  const root = document.getElementById('relay-root');
+ 
+  const strategies = [
+    { id:'nq-don', name:'NQ-DON', engine:'Donchian + Macro Filter', status:'live', last:'2m ago', spark:[4,6,5,8,7,9,11,10,13,12,14,16] },
+    { id:'nq-dyr', name:'NQ-DYR', engine:'Dynamic Regression Trend', status:'live', last:'14m ago', spark:[10,9,11,8,7,9,6,7,5,6,4,5] },
+    { id:'nq-alpha', name:'NQ-ALPHA', engine:'Compression \u2192 Breakout', status:'live', last:'41m ago', spark:[6,7,6,8,9,8,10,9,11,10,12,11] },
+    { id:'nq-markov', name:'NQ-MARKOV', engine:'Hidden Markov Model', status:'live', last:'1h ago', spark:[8,8,9,7,8,10,9,10,8,9,7,8] },
+  ];
+  for (let i = 5; i <= 14; i++) {
+    strategies.push({ id:'pending-'+i, name:'STRAT-'+String(i).padStart(2,'0'), engine:'Not uploaded yet', status:'pending', last:'not connected', spark:[7,7,7,7,7,7,7,7,7,7,7,7] });
+  }
+ 
+  // Real signals load from the backend now (see loadSignals() below) — no
+  // more hardcoded fake feed here.
+ 
+  const accountEquity = 106250.40, accountStart = 105000.00;
+  let risk = { perTrade: 1.0, dailyLoss: 5.0, maxDrawdown: 10.0, maxPositions: 3 };
+ 
+  // Point this at your real Railway backend URL.
+  const BACKEND_URL = 'https://relay-backend-production-5260.up.railway.app';
+  let backtestCache = {}; // strategyId -> { uploadedAt, stats, equityCurve }
+ 
+  function sparkline(data, color, w, h) {
+    const max = Math.max(...data), min = Math.min(...data);
+    const range = (max - min) || 1;
+    const step = w / (data.length - 1);
+    const pts = data.map((v,i) => `${(i*step).toFixed(1)},${(h - ((v-min)/range)*h).toFixed(1)}`).join(' ');
+    return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" /></svg>`;
+  }
+  function bigSpark() {
+    const data = [102000,102400,102200,103100,102900,103600,104200,103900,104800,105400,105100,106250];
+    return sparkline(data, '#4FD1C5', 400, 110);
+  }
+  function fmt(n) { return '$' + n.toLocaleString('en-US', {minimumFractionDigits:0, maximumFractionDigits:0}); }
+ 
+  const stratCards = strategies.map(s => `
+    <div class="strat-card ${s.status==='pending'?'pending':''}" data-strat-card="${s.id}">
+      <div class="strat-top">
+        <span class="strat-name">${s.name}</span>
+        <div class="toggle"><input type="checkbox" data-strat-toggle="${s.id}" ${s.status==='live'?'checked':''} /><span class="track"></span></div>
+      </div>
+      <div class="strat-engine">${s.engine}</div>
+      <div class="strat-spark">${sparkline(s.spark, s.status==='live'?'#4FD1C5':'#454951', 200, 26)}</div>
+      <div class="strat-bottom">
+        <span class="strat-status" data-strat-status="${s.id}" style="color:${s.status==='live'?'#4FD1C5':'#454951'}">${s.status==='live'?'Live':'Not connected'}</span>
+        <span class="strat-last">${s.last}</span>
+      </div>
+    </div>
+  `).join('');
+ 
+  // (Signal log now loads real data from the backend — see loadSignals() below)
+ 
+  root.innerHTML = `
+    <div class="topbar">
+      <div class="brand"><span class="mark">RE<span>LAY</span></span><span class="sub">FTMO \u00b7 MT5 Bridge</span></div>
+      <div class="topbar-right">
+        <div class="status-chip"><span class="led"></span>MT5 Connected</div>
+        <div class="status-chip"><span class="led amber"></span>4 / 14 Strategies Live</div>
+        <div class="clock mono" id="clock">--:--:--</div>
+      </div>
+    </div>
+ 
+    <div class="body-row">
+      <div class="navrail">
+        <a href="#sec-overview" data-target="sec-overview" class="active">Overview</a>
+        <a href="#sec-strategies" data-target="sec-strategies">Strategies</a>
+        <a href="#sec-backtest" data-target="sec-backtest">Backtest</a>
+        <a href="#sec-risk" data-target="sec-risk">Risk</a>
+        <a href="#sec-log" data-target="sec-log">Signal log</a>
+      </div>
+ 
+      <div class="wrap">
+        <section id="sec-overview">
+          <p class="eyebrow">Account performance <span style="color:var(--text-faint); text-transform:none; letter-spacing:0;">— sample data, not yet connected to your real MT5 account</span></p>
+          <div class="hero">
+            <div class="panel">
+              <p class="eyebrow" style="margin-bottom:2px;">Today's P&amp;L</p>
+              <div class="pnl-value">+$1,250.40</div>
+              <div class="pnl-sub">Equity ${fmt(accountEquity)} \u00b7 Starting balance ${fmt(accountStart)}</div>
+              <div class="stat-row">
+                <div class="stat"><span class="num">63%</span><span class="lbl">Win rate</span></div>
+                <div class="stat"><span class="num">6</span><span class="lbl">Trades today</span></div>
+                <div class="stat"><span class="num">1</span><span class="lbl">Open positions</span></div>
+                <div class="stat"><span class="num">12d</span><span class="lbl">Days remaining</span></div>
+              </div>
+            </div>
+            <div class="panel spark-wrap">
+              <p class="eyebrow" style="margin-bottom:0;">Equity curve \u2014 last 30 days</p>
+              ${bigSpark()}
+              <div class="pnl-sub">Peak equity ${fmt(accountEquity)} on Jul 5</div>
+            </div>
+          </div>
+ 
+          <div class="gauges">
+            <div class="panel">
+              <div class="gauge-head"><span class="gauge-title">Daily loss limit</span><span class="gauge-figure"><b>$420</b> of <span id="daily-limit-fig">${fmt(accountEquity*risk.dailyLoss/100)}</span> used</span></div>
+              <div class="gauge-track"><div class="gauge-fill" id="gauge-daily" style="width:0%"></div></div>
+              <div class="gauge-caption"><span>0%</span><span>50%</span><span>100% \u2014 breach</span></div>
+            </div>
+            <div class="panel">
+              <div class="gauge-head"><span class="gauge-title">Max drawdown</span><span class="gauge-figure"><b>$1,860</b> of <span id="maxdd-limit-fig">${fmt(accountStart*risk.maxDrawdown/100)}</span> used</span></div>
+              <div class="gauge-track"><div class="gauge-fill" id="gauge-max" style="width:0%"></div></div>
+              <div class="gauge-caption"><span>0%</span><span>50%</span><span>100% \u2014 breach</span></div>
+            </div>
+          </div>
+        </section>
+ 
+        <section id="sec-strategies">
+          <div class="section-head">
+            <h2 class="section-title">Strategies</h2>
+            <span class="section-meta">4 live \u00b7 10 not connected</span>
+          </div>
+          <div class="strat-grid">${stratCards}</div>
+        </section>
+ 
+        <section id="sec-backtest">
+          <div class="section-head">
+            <h2 class="section-title">Backtest</h2>
+            <span class="section-meta" id="backtest-updated">No data uploaded yet</span>
+          </div>
+          <div class="panel" style="margin-bottom:16px;">
+            <div class="field-row" style="border-bottom:none; padding:0;">
+              <div>
+                <div class="field-label">Strategy</div>
+                <div class="field-hint">Pick which strategy this backtest belongs to, then upload its "List of Trades" CSV from TradingView's Strategy Tester</div>
+              </div>
+              <div class="field-input-wrap" style="gap:12px;">
+                <select id="backtest-strat-select" class="risk-input" style="border:1px solid var(--border-subtle); background:var(--bg-raised); padding:8px 10px; width:160px; font-size:13px;">
+                  ${strategies.map(s => `<option value="${s.id}">${s.name}</option>`).join('')}
+                </select>
+                <input type="file" id="backtest-csv-input" accept=".csv" style="display:none;" />
+                <button class="btn" id="backtest-upload-btn">Upload CSV</button>
+              </div>
+            </div>
+          </div>
+          <div id="backtest-empty" class="panel" style="text-align:center; color:var(--text-dim); font-family:var(--mono); font-size:13px;">
+            No backtest uploaded for this strategy yet. Export "List of Trades" as CSV from TradingView's Strategy Tester and upload it above.
+          </div>
+          <div id="backtest-content" style="display:none;">
+            <div class="panel" style="margin-bottom:16px;">
+              <p class="eyebrow">Backtest equity curve</p>
+              <div id="backtest-spark"></div>
+            </div>
+            <div class="risk-grid">
+              <div class="risk-box"><div class="lbl">Net profit</div><div class="v mono" id="bt-net" style="font-family:var(--mono); font-size:20px;">\u2014</div></div>
+              <div class="risk-box"><div class="lbl">Win rate</div><div class="v mono" id="bt-winrate" style="font-family:var(--mono); font-size:20px;">\u2014</div></div>
+              <div class="risk-box"><div class="lbl">Profit factor</div><div class="v mono" id="bt-pf" style="font-family:var(--mono); font-size:20px;">\u2014</div></div>
+              <div class="risk-box"><div class="lbl">Max drawdown</div><div class="v mono" id="bt-dd" style="font-family:var(--mono); font-size:20px;">\u2014</div></div>
+            </div>
+          </div>
+        </section>
+ 
+        <section id="sec-risk">
+          <div class="section-head">
+            <h2 class="section-title">Risk</h2>
+            <span class="section-meta">Applies across all strategies</span>
+          </div>
+          <div class="risk-grid">
+            <div class="risk-box">
+              <div class="lbl">Risk per trade</div>
+              <div class="risk-input-row"><input class="risk-input" type="number" step="0.1" value="${risk.perTrade}" id="risk-per-trade" /><span class="risk-suffix">%</span></div>
+              <div class="risk-computed">= <b id="risk-per-trade-computed">${fmt(accountEquity*risk.perTrade/100)}</b> per trade</div>
+            </div>
+            <div class="risk-box">
+              <div class="lbl">Daily loss limit</div>
+              <div class="risk-input-row"><input class="risk-input" type="number" step="0.1" value="${risk.dailyLoss}" id="risk-daily-loss" /><span class="risk-suffix">%</span></div>
+              <div class="risk-computed">= <b id="risk-daily-loss-computed">${fmt(accountEquity*risk.dailyLoss/100)}</b> / day</div>
+            </div>
+            <div class="risk-box">
+              <div class="lbl">Max drawdown</div>
+              <div class="risk-input-row"><input class="risk-input" type="number" step="0.1" value="${risk.maxDrawdown}" id="risk-max-dd" /><span class="risk-suffix">%</span></div>
+              <div class="risk-computed">= <b id="risk-max-dd-computed">${fmt(accountStart*risk.maxDrawdown/100)}</b> total</div>
+            </div>
+            <div class="risk-box">
+              <div class="lbl">Max open positions</div>
+              <div class="risk-input-row"><input class="risk-input" type="number" step="1" value="${risk.maxPositions}" id="risk-max-pos" /><span class="risk-suffix"></span></div>
+              <div class="risk-computed">across all 14 strategies</div>
+            </div>
+          </div>
+          <div class="risk-footer">
+            <div class="kill-mini"><span class="led" id="kill-led"></span><span id="kill-label">Trading enabled</span> &nbsp;<div class="toggle"><input type="checkbox" id="kill-toggle" checked /><span class="track"></span></div></div>
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span class="save-msg" id="save-msg">Saved</span>
+              <button class="btn" id="save-risk">Save</button>
+            </div>
+          </div>
+        </section>
+ 
+        <section id="sec-log">
+          <div class="section-head">
+            <h2 class="section-title">Signal log</h2>
+            <span class="section-meta" id="log-meta">Loading real signals\u2026</span>
+          </div>
+          <div class="panel feed-panel">
+            <div class="feed-row head"><span>Time</span><span>Strategy</span><span>Action</span><span>Symbol</span><span>Qty</span><span>Status</span></div>
+            <div id="log-rows"><div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Loading\u2026</span></div></div>
+          </div>
+        </section>
+ 
+        <div class="footnote"><span>RELAY \u2014 design preview, sample data</span><span>Broker: FTMO \u00b7 MT5</span></div>
+      </div>
+    </div>
+  `;
+ 
+  // clock
+  function tick() { const el = root.querySelector('#clock'); if (el) el.textContent = new Date().toLocaleTimeString('en-GB', { hour12: false }); }
+  tick(); setInterval(tick, 1000);
+ 
+  // gauges animate in
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      const d = root.querySelector('#gauge-daily'); const m = root.querySelector('#gauge-max');
+      if (d) d.style.width = '8%'; if (m) m.style.width = '17.7%';
+    }, 150);
+  });
+ 
+  // risk inputs live compute
+  const perTrade = root.querySelector('#risk-per-trade');
+  const dailyLoss = root.querySelector('#risk-daily-loss');
+  const maxDd = root.querySelector('#risk-max-dd');
+  perTrade.addEventListener('input', () => { root.querySelector('#risk-per-trade-computed').textContent = fmt(accountEquity * (parseFloat(perTrade.value)||0) / 100); });
+  dailyLoss.addEventListener('input', () => {
+    const v = fmt(accountEquity * (parseFloat(dailyLoss.value)||0) / 100);
+    root.querySelector('#risk-daily-loss-computed').textContent = v;
+    root.querySelector('#daily-limit-fig').textContent = v;
+  });
+  maxDd.addEventListener('input', () => {
+    const v = fmt(accountStart * (parseFloat(maxDd.value)||0) / 100);
+    root.querySelector('#risk-max-dd-computed').textContent = v;
+    root.querySelector('#maxdd-limit-fig').textContent = v;
+  });
+ 
+  const killToggle = root.querySelector('#kill-toggle');
+  killToggle.addEventListener('change', () => {
+    root.querySelector('#kill-led').classList.toggle('grey', !killToggle.checked);
+    root.querySelector('#kill-label').textContent = killToggle.checked ? 'Trading enabled' : 'Trading paused';
+  });
+ 
+  root.querySelector('#save-risk').addEventListener('click', saveRisk);
+ 
+  loadRisk();
+  loadSignals();
+  wireStrategyToggles();
+  // refresh the signal log periodically so new real trades show up without a manual reload
+  setInterval(loadSignals, 15000);
+    const msg = root.querySelector('#save-msg');
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 1800);
+  });
+ 
+  // ---------------------------------------------------------------------
+  // SIGNAL LOG: load real signals from the backend
+  // ---------------------------------------------------------------------
+ 
+  function statusFor(entry) {
+    if (entry.forwarded?.reason === 'trading paused') return { label: 'blocked \u2014 trading paused', cls: '' };
+    if (entry.forwarded?.reason === 'strategy paused') return { label: 'blocked \u2014 strategy paused', cls: '' };
+    if (entry.forwarded?.skipped) return { label: 'not forwarded', cls: '' };
+    if (entry.forwarded?.status === 200) return { label: 'forwarded', cls: 'filled' };
+    if (entry.forwarded?.error) return { label: 'error', cls: '' };
+    return { label: 'received', cls: '' };
+  }
+ 
+  async function loadSignals() {
+    const meta = root.querySelector('#log-meta');
+    const rowsEl = root.querySelector('#log-rows');
+    try {
+      const res = await fetch(BACKEND_URL + '/signals');
+      if (!res.ok) throw new Error('backend returned ' + res.status);
+      const signals = await res.json();
+      if (!signals.length) {
+        rowsEl.innerHTML = `<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">No signals received yet.</span></div>`;
+        meta.textContent = 'Live from your backend \u00b7 0 signals';
+        return;
+      }
+      rowsEl.innerHTML = signals.map(s => {
+        const st = statusFor(s);
+        const time = s.receivedAt ? new Date(s.receivedAt).toLocaleTimeString('en-GB', { hour12: false }) : '\u2014';
+        return `<div class="feed-row">
+          <span class="feed-time">${time}</span>
+          <span>${s.strategyId}</span>
+          <span class="feed-action ${s.action}">${s.action}</span>
+          <span>${s.symbol}</span>
+          <span>${s.qty ?? '\u2014'}</span>
+          <span class="feed-status ${st.cls}">${st.label}</span>
+        </div>`;
+      }).join('');
+      meta.textContent = `Live from your backend \u00b7 ${signals.length} signal${signals.length === 1 ? '' : 's'}`;
+    } catch (err) {
+      rowsEl.innerHTML = `<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Could not reach backend: ${err.message}</span></div>`;
+      meta.textContent = 'Backend unreachable';
+    }
+  }
+ 
+  // ---------------------------------------------------------------------
+  // RISK: load real settings from backend, save real settings to backend
+  // ---------------------------------------------------------------------
+ 
+  async function loadRisk() {
+    try {
+      const res = await fetch(BACKEND_URL + '/risk');
+      if (!res.ok) throw new Error('backend returned ' + res.status);
+      const data = await res.json();
+      risk.perTrade = data.perTradeRiskPercent;
+      risk.dailyLoss = data.dailyLossLimitPercent;
+      risk.maxDrawdown = data.maxDrawdownPercent;
+      risk.maxPositions = data.maxOpenPositions;
+ 
+      root.querySelector('#risk-per-trade').value = risk.perTrade;
+      root.querySelector('#risk-daily-loss').value = risk.dailyLoss;
+      root.querySelector('#risk-max-dd').value = risk.maxDrawdown;
+      root.querySelector('#risk-max-pos').value = risk.maxPositions;
+      root.querySelector('#risk-per-trade-computed').textContent = fmt(accountEquity * risk.perTrade / 100);
+      root.querySelector('#risk-daily-loss-computed').textContent = fmt(accountEquity * risk.dailyLoss / 100);
+      root.querySelector('#daily-limit-fig').textContent = fmt(accountEquity * risk.dailyLoss / 100);
+      root.querySelector('#risk-max-dd-computed').textContent = fmt(accountStart * risk.maxDrawdown / 100);
+      root.querySelector('#maxdd-limit-fig').textContent = fmt(accountStart * risk.maxDrawdown / 100);
+ 
+      const killToggle = root.querySelector('#kill-toggle');
+      killToggle.checked = data.tradingEnabled;
+      root.querySelector('#kill-led').classList.toggle('grey', !data.tradingEnabled);
+      root.querySelector('#kill-label').textContent = data.tradingEnabled ? 'Trading enabled' : 'Trading paused';
+    } catch (err) {
+      console.warn('Could not load risk settings from backend:', err.message);
+    }
+  }
+ 
+  async function saveRisk() {
+    const payload = {
+      tradingEnabled: root.querySelector('#kill-toggle').checked,
+      perTradeRiskPercent: parseFloat(root.querySelector('#risk-per-trade').value) || risk.perTrade,
+      dailyLossLimitPercent: parseFloat(root.querySelector('#risk-daily-loss').value) || risk.dailyLoss,
+      maxDrawdownPercent: parseFloat(root.querySelector('#risk-max-dd').value) || risk.maxDrawdown,
+      maxOpenPositions: parseInt(root.querySelector('#risk-max-pos').value) || risk.maxPositions,
+    };
+    const msg = root.querySelector('#save-msg');
+    try {
+      const res = await fetch(BACKEND_URL + '/risk', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error('backend returned ' + res.status);
+      msg.textContent = 'Saved';
+      msg.style.color = 'var(--cyan)';
+    } catch (err) {
+      msg.textContent = 'Could not save: ' + err.message;
+      msg.style.color = 'var(--red)';
+    }
+    msg.classList.add('show');
+    setTimeout(() => msg.classList.remove('show'), 2200);
+  }
+ 
+  // ---------------------------------------------------------------------
+  // STRATEGY PAUSE TOGGLES: wire to real backend overrides
+  // ---------------------------------------------------------------------
+ 
+  function wireStrategyToggles() {
+    root.querySelectorAll('[data-strat-toggle]').forEach(toggle => {
+      toggle.addEventListener('change', async () => {
+        const id = toggle.dataset.stratToggle;
+        const statusEl = root.querySelector(`[data-strat-status="${id}"]`);
+        const cardEl = root.querySelector(`[data-strat-card="${id}"]`);
+        try {
+          await fetch(BACKEND_URL + '/strategies/' + id + '/override', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ enabled: toggle.checked }),
+          });
+        } catch (err) {
+          console.warn('Could not save strategy override:', err.message);
+        }
+        if (statusEl) {
+          statusEl.textContent = toggle.checked ? 'Live' : 'Paused';
+          statusEl.style.color = toggle.checked ? '#4FD1C5' : '#454951';
+        }
+        if (cardEl) cardEl.classList.toggle('pending', !toggle.checked);
+      });
+    });
+  }
+ 
+  function findColumn(headers, patterns) {
+    for (const p of patterns) {
+      const hit = headers.find(h => p.test(h));
+      if (hit) return hit;
+    }
+    return null;
+  }
+ 
+  function computeBacktestFromCsv(rows) {
+    const headers = Object.keys(rows[0] || {});
+    const cumulCol = findColumn(headers, [/cumulative profit.*(?!%)/i, /cum.*p&?l/i]) ||
+                     headers.find(h => /cumulative/i.test(h) && !/%/.test(h));
+    const profitCol = headers.find(h => /^profit$/i.test(h.trim())) ||
+                       headers.find(h => /profit/i.test(h) && !/%/.test(h) && !/cumulative/i.test(h));
+ 
+    let equityCurve = [];
+    let perTradeProfits = [];
+ 
+    if (cumulCol) {
+      equityCurve = rows.map((r, i) => ({ i, v: parseFloat(String(r[cumulCol]).replace(/[^0-9.\-]/g, '')) || 0 }));
+    }
+    if (profitCol) {
+      perTradeProfits = rows.map(r => parseFloat(String(r[profitCol]).replace(/[^0-9.\-]/g, '')) || 0);
+      if (!cumulCol) {
+        let running = 0;
+        equityCurve = perTradeProfits.map((p, i) => { running += p; return { i, v: running }; });
+      }
+    }
+ 
+    if (!equityCurve.length) return null;
+ 
+    const netProfit = equityCurve.length ? equityCurve[equityCurve.length - 1].v : 0;
+    const wins = perTradeProfits.filter(p => p > 0);
+    const losses = perTradeProfits.filter(p => p < 0);
+    const winRate = perTradeProfits.length ? (wins.length / perTradeProfits.length) * 100 : null;
+    const grossProfit = wins.reduce((a, b) => a + b, 0);
+    const grossLoss = Math.abs(losses.reduce((a, b) => a + b, 0));
+    const profitFactor = grossLoss > 0 ? grossProfit / grossLoss : (grossProfit > 0 ? Infinity : null);
+ 
+    let peak = -Infinity, maxDD = 0;
+    equityCurve.forEach(pt => {
+      if (pt.v > peak) peak = pt.v;
+      const dd = peak - pt.v;
+      if (dd > maxDD) maxDD = dd;
+    });
+ 
+    return {
+      stats: {
+        netProfit,
+        winRate,
+        profitFactor,
+        maxDrawdown: maxDD,
+        totalTrades: rows.length,
+      },
+      equityCurve: equityCurve.map(p => p.v),
+    };
+  }
+ 
+  function renderBacktest(strategyId) {
+    const data = backtestCache[strategyId];
+    const empty = root.querySelector('#backtest-empty');
+    const content = root.querySelector('#backtest-content');
+    const updated = root.querySelector('#backtest-updated');
+ 
+    if (!data) {
+      empty.style.display = '';
+      content.style.display = 'none';
+      updated.textContent = 'No data uploaded yet';
+      return;
+    }
+ 
+    empty.style.display = 'none';
+    content.style.display = '';
+    const d = new Date(data.uploadedAt);
+    updated.textContent = 'Last updated ' + d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+ 
+    root.querySelector('#backtest-spark').innerHTML = sparkline(data.equityCurve.length > 1 ? data.equityCurve : [0, 0], '#4FD1C5', 600, 120);
+    root.querySelector('#bt-net').textContent = (data.stats.netProfit >= 0 ? '+' : '') + fmt(data.stats.netProfit);
+    root.querySelector('#bt-net').style.color = data.stats.netProfit >= 0 ? 'var(--cyan)' : 'var(--red)';
+    root.querySelector('#bt-winrate').textContent = data.stats.winRate != null ? data.stats.winRate.toFixed(1) + '%' : '\u2014';
+    root.querySelector('#bt-pf').textContent = data.stats.profitFactor != null && isFinite(data.stats.profitFactor) ? data.stats.profitFactor.toFixed(2) : (data.stats.profitFactor === Infinity ? '\u221e' : '\u2014');
+    root.querySelector('#bt-dd').textContent = fmt(data.stats.maxDrawdown);
+  }
+ 
+  async function loadAllBacktests() {
+    try {
+      const res = await fetch(BACKEND_URL + '/backtest');
+      if (res.ok) {
+        backtestCache = await res.json();
+      }
+    } catch (err) {
+      console.warn('Could not reach backend for backtest data:', err.message);
+    }
+    const select = root.querySelector('#backtest-strat-select');
+    if (select) renderBacktest(select.value);
+  }
+ 
+  async function saveBacktest(strategyId, parsed) {
+    try {
+      await fetch(BACKEND_URL + '/backtest/' + strategyId, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(parsed),
+      });
+    } catch (err) {
+      console.warn('Could not save backtest to backend:', err.message);
+    }
+    backtestCache[strategyId] = { uploadedAt: new Date().toISOString(), ...parsed };
+    renderBacktest(strategyId);
+  }
+ 
+  const backtestSelect = root.querySelector('#backtest-strat-select');
+  const backtestUploadBtn = root.querySelector('#backtest-upload-btn');
+  const backtestFileInput = root.querySelector('#backtest-csv-input');
+ 
+  backtestSelect.addEventListener('change', () => renderBacktest(backtestSelect.value));
+  backtestUploadBtn.addEventListener('click', () => backtestFileInput.click());
+  backtestFileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
+        const parsed = computeBacktestFromCsv(results.data);
+        if (!parsed) {
+          alert('Could not find a profit/cumulative-profit column in this CSV. Make sure this is the "List of Trades" export from TradingView\'s Strategy Tester.');
+          return;
+        }
+        saveBacktest(backtestSelect.value, parsed);
+      },
+      error: (err) => alert('Could not read that CSV: ' + err.message),
+    });
+    backtestFileInput.value = '';
+  });
+ 
+  loadAllBacktests();
+ 
+  // scroll-spy nav
+  const navLinks = root.querySelectorAll('.navrail a');
+  const sections = root.querySelectorAll('section');
+  navLinks.forEach(a => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    root.querySelector('#' + a.dataset.target).scrollIntoView({ behavior: 'smooth' });
+  }));
+  const scrollContainer = root.querySelector('.wrap').closest('.body-row');
+  window.addEventListener('scroll', () => {
+    let current = sections[0].id;
+    sections.forEach(sec => { if (window.scrollY + 100 >= sec.offsetTop) current = sec.id; });
+    navLinks.forEach(a => a.classList.toggle('active', a.dataset.target === current));
+  }, { passive: true });
+})();
+</script>
+</body>
+</html>
