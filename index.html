@@ -161,10 +161,10 @@
   const root = document.getElementById('relay-root');
 
   const strategies = [
-    { id:'nq-don', name:'NQ-DON', engine:'Donchian + Macro Filter', session:'18:00 \u2192 07:00 (fixed hours)', sl:'1.0x ATR', tp:'3.7x ATR', status:'live', last:'2m ago', spark:[4,6,5,8,7,9,11,10,13,12,14,16] },
-    { id:'nq-dyr', name:'NQ-DYR', engine:'Dynamic Regression Trend', session:'09:30 \u2192 16:00', sl:'1.5x ATR', tp:'3.0x ATR', status:'live', last:'14m ago', spark:[10,9,11,8,7,9,6,7,5,6,4,5] },
-    { id:'nq-alpha', name:'NQ-ALPHA', engine:'Compression \u2192 Breakout', session:'09:30 \u2192 16:00', sl:'2.0x ATR', tp:'3.0x ATR', status:'live', last:'41m ago', spark:[6,7,6,8,9,8,10,9,11,10,12,11] },
-    { id:'nq-markov', name:'NQ-MARKOV', engine:'Hidden Markov Model', session:'09:30 \u2192 16:00', sl:'1.5x ATR', tp:'3.0x ATR', status:'live', last:'1h ago', spark:[8,8,9,7,8,10,9,10,8,9,7,8] },
+    { id:'nq-don', name:'NQ-DON', engine:'Donchian + Macro Filter', session:'18:00 \u2192 07:00 (fixed hours)', sl:'1.0x ATR', tp:'3.7x ATR', status:'live', last:'2m ago', spark:[-400, 72750, 113670, 147940, 196470, 279415, 350575, 444290, 510680, 626585, 826905, 1106670] },
+    { id:'nq-dyr', name:'NQ-DYR', engine:'Dynamic Regression Trend', session:'09:30 \u2192 16:00', sl:'1.5x ATR', tp:'3.0x ATR', status:'live', last:'14m ago', spark:[2100, 157460, 236940, 281830, 383265, 393910, 383940, 449015, 567225, 633625, 762205, 1055360] },
+    { id:'nq-alpha', name:'NQ-ALPHA', engine:'Compression \u2192 Breakout', session:'09:30 \u2192 16:00', sl:'2.0x ATR', tp:'3.0x ATR', status:'live', last:'41m ago', spark:[-1010, 103975, 195610, 263975, 311820, 374430, 465210, 513960, 609290, 729080, 831490, 1076860] },
+    { id:'nq-markov', name:'NQ-MARKOV', engine:'Hidden Markov Model', session:'09:30 \u2192 16:00', sl:'1.5x ATR', tp:'3.0x ATR', status:'live', last:'1h ago', spark:[2190, 83530, 129380, 171090, 183200, 231860, 308635, 349040, 437835, 495825, 525755, 710830] },
   ];
   for (let i = 5; i <= 14; i++) {
     strategies.push({ id:'pending-'+i, name:'STRAT-'+String(i).padStart(2,'0'), engine:'Not uploaded yet', session:'\u2014', sl:'\u2014', tp:'\u2014', status:'pending', last:'not connected', spark:[7,7,7,7,7,7,7,7,7,7,7,7] });
