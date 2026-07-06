@@ -403,11 +403,6 @@
   wireStrategyToggles();
   // refresh the signal log periodically so new real trades show up without a manual reload
   setInterval(loadSignals, 15000);
-    const msg = root.querySelector('#save-msg');
-    msg.classList.add('show');
-    setTimeout(() => msg.classList.remove('show'), 1800);
-  });
-
   // ---------------------------------------------------------------------
   // SIGNAL LOG: load real signals from the backend
   // ---------------------------------------------------------------------
