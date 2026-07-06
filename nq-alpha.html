@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NQ-ALPHA — RELAY</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg-void: #0A0B0D;
+    --bg-panel: #14161A;
+    --bg-raised: #1C1F24;
+    --border-subtle: #262931;
+    --border-faint: #1E2126;
+    --amber: #FF9F1C;
+    --cyan: #4FD1C5;
+    --red: #FF5A5A;
+    --text-primary: #EDEBE6;
+    --text-dim: #7C828C;
+    --text-faint: #454951;
+    --mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+    --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg-void); color: var(--text-primary); font-family: var(--sans); min-height: 100vh; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: 0.02em; color: var(--text-primary); text-decoration: none; }
+  .brand .mark span { color: var(--amber); }
+  .back-link { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+  .back-link:hover { color: var(--text-primary); }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 28px 60px 28px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 8px 0; }
+  .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 22px 24px; }
+  .head-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .led { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; box-shadow: 0 0 0 0 rgba(79,209,197,.55); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);} 70%{box-shadow:0 0 0 6px rgba(79,209,197,0);} 100%{box-shadow:0 0 0 0 rgba(79,209,197,0);} }
+  .strat-title { font-family: var(--mono); font-size: 30px; font-weight: 700; }
+  .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .spec-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
+  .spec-box .k { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .spec-box .v { font-family: var(--mono); font-size: 15px; color: var(--text-primary); }
+  .section-title { font-family: var(--sans); font-weight: 700; font-size: 16px; margin: 32px 0 14px 0; color: var(--text-primary); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px; }
+  .stat-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
+  .stat-box .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+  .stat-box .val { font-family: var(--mono); font-size: 20px; }
+  .field-hint { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 12px; }
+  .feed-panel { padding: 0; overflow: hidden; }
+  .feed-row { display: grid; grid-template-columns: 140px 100px 70px 90px 60px 1fr; gap: 10px; padding: 10px 18px; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-faint); align-items: center; }
+  .feed-row.head { color: var(--text-faint); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; background: var(--bg-raised); }
+  .feed-row:last-child { border-bottom: none; }
+  .feed-time { color: var(--text-dim); }
+  .feed-action { text-transform: uppercase; font-weight: 600; }
+  .feed-action.buy { color: var(--cyan); }
+  .feed-action.sell { color: var(--amber); }
+  .feed-action.close { color: var(--text-dim); }
+  .feed-status.filled { color: var(--cyan); }
+  @media (max-width: 700px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><a href="index.html" class="mark">RE<span>LAY</span></a></div>
+    <a href="index.html" class="back-link">\u2190 back to dashboard</a>
+  </div>
+
+  <div class="wrap">
+    <div class="head-row">
+      <span class="led"></span>
+      <span class="strat-title">NQ-ALPHA</span>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-box"><div class="k">Engine</div><div class="v">Compression → Breakout</div></div>
+      <div class="spec-box"><div class="k">Session</div><div class="v">09:30 → 16:00</div></div>
+      <div class="spec-box"><div class="k">Stop loss</div><div class="v">2.0x ATR</div></div>
+      <div class="spec-box"><div class="k">Take profit</div><div class="v">3.0x ATR</div></div>
+    </div>
+
+    <p class="eyebrow">Backtest performance</p>
+    <div class="panel">
+      <svg viewBox="0 0 800 130" preserveAspectRatio="none" style="width:100%; height:130px; display:block;">
+        <polyline points="0.0,130.0 5.4,128.6 10.7,127.5 16.1,126.1 21.5,125.1 26.8,122.6 32.2,121.8 37.6,120.3 43.0,121.4 48.3,120.5 53.7,120.8 59.1,120.1 64.4,117.3 69.8,119.1 75.2,117.7 80.5,116.0 85.9,115.4 91.3,113.5 96.6,114.1 102.0,112.9 107.4,112.6 112.8,109.8 118.1,109.9 123.5,110.3 128.9,106.5 134.2,106.3 139.6,107.2 145.0,106.7 150.3,106.0 155.7,103.7 161.1,104.5 166.4,104.0 171.8,103.1 177.2,101.4 182.6,101.7 187.9,98.9 193.3,98.2 198.7,98.0 204.0,97.9 209.4,97.3 214.8,97.6 220.1,99.2 225.5,100.1 230.9,98.7 236.2,95.8 241.6,97.0 247.0,96.3 252.3,95.3 257.7,95.1 263.1,93.2 268.5,92.3 273.8,91.4 279.2,88.4 284.6,87.3 289.9,87.3 295.3,87.3 300.7,85.3 306.0,85.5 311.4,86.2 316.8,85.3 322.1,85.8 327.5,85.4 332.9,84.7 338.3,83.3 343.6,85.3 349.0,84.5 354.4,83.4 359.7,83.1 365.1,81.0 370.5,79.3 375.8,79.0 381.2,77.0 386.6,77.9 391.9,75.4 397.3,75.3 402.7,73.8 408.1,72.7 413.4,71.9 418.8,70.8 424.2,67.5 429.5,67.8 434.9,69.3 440.3,67.1 445.6,67.4 451.0,67.4 456.4,66.9 461.7,67.4 467.1,67.9 472.5,67.2 477.9,66.5 483.2,66.1 488.6,64.9 494.0,65.1 499.3,63.7 504.7,64.7 510.1,62.8 515.4,59.4 520.8,60.2 526.2,59.4 531.5,57.9 536.9,56.4 542.3,55.1 547.7,55.1 553.0,52.7 558.4,54.1 563.8,54.9 569.1,53.7 574.5,48.9 579.9,49.1 585.2,46.1 590.6,45.2 596.0,43.9 601.3,41.9 606.7,41.2 612.1,39.4 617.4,38.6 622.8,35.2 628.2,33.6 633.6,32.3 638.9,31.1 644.3,31.7 649.7,28.8 655.0,28.4 660.4,30.4 665.8,32.4 671.1,29.6 676.5,28.5 681.9,26.7 687.2,25.5 692.6,25.7 698.0,22.2 703.4,21.5 708.7,19.5 714.1,18.2 719.5,17.9 724.8,16.8 730.2,16.9 735.6,15.0 740.9,14.8 746.3,13.3 751.7,12.3 757.0,12.2 762.4,10.5 767.8,10.5 773.2,9.6 778.5,7.6 783.9,6.6 789.3,6.1 794.6,5.8 800.0,0.0" fill="none" stroke="#4FD1C5" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+      </svg>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="lbl">Net profit</div><div class="val" style="color:var(--cyan)">+$1,076,860</div></div>
+      <div class="stat-box"><div class="lbl">Win rate</div><div class="val">39.9%</div></div>
+      <div class="stat-box"><div class="lbl">Profit factor</div><div class="val">1.21</div></div>
+      <div class="stat-box"><div class="lbl">Max drawdown</div><div class="val">-$38,150</div></div>
+    </div>
+    <p class="field-hint">Based on 7642 completed trades from TradingView's Strategy Tester (List of Trades export).</p>
+
+    <p class="section-title">Live signal history</p>
+    <div class="panel feed-panel">
+      <div class="feed-row head"><span>Time</span><span>Strategy</span><span>Action</span><span>Symbol</span><span>Qty</span><span>Status</span></div>
+      <div id="log-rows"><div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Loading\u2026</span></div></div>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://relay-backend-production-5260.up.railway.app';
+    const STRATEGY_ID = 'nq-alpha';
+
+    function statusFor(entry) {
+      if (entry.forwarded && entry.forwarded.reason === 'trading paused') return { label: 'blocked \u2014 trading paused', cls: '' };
+      if (entry.forwarded && entry.forwarded.reason === 'strategy paused') return { label: 'blocked \u2014 strategy paused', cls: '' };
+      if (entry.forwarded && entry.forwarded.skipped) return { label: 'not forwarded', cls: '' };
+      if (entry.forwarded && entry.forwarded.status === 200) return { label: 'forwarded', cls: 'filled' };
+      if (entry.forwarded && entry.forwarded.error) return { label: 'error', cls: '' };
+      return { label: 'received', cls: '' };
+    }
+
+    async function loadSignals() {
+      const rowsEl = document.getElementById('log-rows');
+      try {
+        const res = await fetch(BACKEND_URL + '/signals');
+        if (!res.ok) throw new Error('backend returned ' + res.status);
+        const signals = (await res.json()).filter(s => s.strategyId === STRATEGY_ID);
+        if (!signals.length) {
+          rowsEl.innerHTML = '<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">No live signals from NQ-ALPHA yet.</span></div>';
+          return;
+        }
+        rowsEl.innerHTML = signals.map(s => {
+          const st = statusFor(s);
+          const time = s.receivedAt ? new Date(s.receivedAt).toLocaleString('en-GB', { hour12: false }) : '\u2014';
+          return '<div class="feed-row"><span class="feed-time">' + time + '</span><span>' + s.strategyId + '</span><span class="feed-action ' + s.action + '">' + s.action + '</span><span>' + s.symbol + '</span><span>' + (s.qty ?? '\u2014') + '</span><span class="feed-status ' + st.cls + '">' + st.label + '</span></div>';
+        }).join('');
+      } catch (err) {
+        rowsEl.innerHTML = '<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Could not reach backend: ' + err.message + '</span></div>';
+      }
+    }
+    loadSignals();
+  </script>
+</body>
+</html>
