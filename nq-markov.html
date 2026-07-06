@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NQ-MARKOV — RELAY</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --bg-void: #0A0B0D;
+    --bg-panel: #14161A;
+    --bg-raised: #1C1F24;
+    --border-subtle: #262931;
+    --border-faint: #1E2126;
+    --amber: #FF9F1C;
+    --cyan: #4FD1C5;
+    --red: #FF5A5A;
+    --text-primary: #EDEBE6;
+    --text-dim: #7C828C;
+    --text-faint: #454951;
+    --mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
+    --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg-void); color: var(--text-primary); font-family: var(--sans); min-height: 100vh; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand .mark { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: 0.02em; color: var(--text-primary); text-decoration: none; }
+  .brand .mark span { color: var(--amber); }
+  .back-link { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+  .back-link:hover { color: var(--text-primary); }
+  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 28px 60px 28px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 8px 0; }
+  .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 22px 24px; }
+  .head-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+  .led { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; box-shadow: 0 0 0 0 rgba(79,209,197,.55); animation: pulse 2.4s infinite; }
+  @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);} 70%{box-shadow:0 0 0 6px rgba(79,209,197,0);} 100%{box-shadow:0 0 0 0 rgba(79,209,197,0);} }
+  .strat-title { font-family: var(--mono); font-size: 30px; font-weight: 700; }
+  .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
+  .spec-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
+  .spec-box .k { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
+  .spec-box .v { font-family: var(--mono); font-size: 15px; color: var(--text-primary); }
+  .section-title { font-family: var(--sans); font-weight: 700; font-size: 16px; margin: 32px 0 14px 0; color: var(--text-primary); }
+  .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px; }
+  .stat-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
+  .stat-box .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
+  .stat-box .val { font-family: var(--mono); font-size: 20px; }
+  .field-hint { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 12px; }
+  .feed-panel { padding: 0; overflow: hidden; }
+  .feed-row { display: grid; grid-template-columns: 140px 100px 70px 90px 60px 1fr; gap: 10px; padding: 10px 18px; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-faint); align-items: center; }
+  .feed-row.head { color: var(--text-faint); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; background: var(--bg-raised); }
+  .feed-row:last-child { border-bottom: none; }
+  .feed-time { color: var(--text-dim); }
+  .feed-action { text-transform: uppercase; font-weight: 600; }
+  .feed-action.buy { color: var(--cyan); }
+  .feed-action.sell { color: var(--amber); }
+  .feed-action.close { color: var(--text-dim); }
+  .feed-status.filled { color: var(--cyan); }
+  @media (max-width: 700px) { .stat-grid { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand"><a href="index.html" class="mark">RE<span>LAY</span></a></div>
+    <a href="index.html" class="back-link">\u2190 back to dashboard</a>
+  </div>
+
+  <div class="wrap">
+    <div class="head-row">
+      <span class="led"></span>
+      <span class="strat-title">NQ-MARKOV</span>
+    </div>
+
+    <div class="spec-grid">
+      <div class="spec-box"><div class="k">Engine</div><div class="v">Hidden Markov Model</div></div>
+      <div class="spec-box"><div class="k">Session</div><div class="v">09:30 → 16:00</div></div>
+      <div class="spec-box"><div class="k">Stop loss</div><div class="v">1.5x ATR</div></div>
+      <div class="spec-box"><div class="k">Take profit</div><div class="v">3.0x ATR</div></div>
+    </div>
+
+    <p class="eyebrow">Backtest performance</p>
+    <div class="panel">
+      <svg viewBox="0 0 800 130" preserveAspectRatio="none" style="width:100%; height:130px; display:block;">
+        <polyline points="0.0,130.0 5.4,128.6 10.7,128.6 16.1,127.1 21.5,124.6 26.8,123.0 32.2,123.1 37.6,121.9 43.0,119.8 48.3,120.2 53.7,118.7 59.1,117.0 64.4,115.1 69.8,115.6 75.2,115.1 80.5,114.3 85.9,114.6 91.3,114.9 96.6,112.3 102.0,111.5 107.4,110.4 112.8,111.0 118.1,109.1 123.5,109.1 128.9,107.7 134.2,106.7 139.6,106.5 145.0,103.6 150.3,103.1 155.7,101.7 161.1,102.1 166.4,98.3 171.8,98.5 177.2,97.5 182.6,98.9 187.9,98.6 193.3,98.5 198.7,99.0 204.0,100.7 209.4,99.7 214.8,98.0 220.1,95.5 225.5,96.9 230.9,98.2 236.2,97.5 241.6,97.5 247.0,98.3 252.3,98.2 257.7,98.7 263.1,97.1 268.5,96.8 273.8,94.5 279.2,93.3 284.6,92.4 289.9,90.2 295.3,90.1 300.7,89.4 306.0,88.6 311.4,87.8 316.8,88.0 322.1,88.2 327.5,89.2 332.9,87.9 338.3,86.7 343.6,86.8 349.0,86.4 354.4,86.1 359.7,85.4 365.1,84.4 370.5,83.3 375.8,82.8 381.2,83.0 386.6,80.8 391.9,77.0 397.3,74.9 402.7,73.8 408.1,71.8 413.4,72.1 418.8,73.2 424.2,74.1 429.5,73.3 434.9,73.3 440.3,70.9 445.6,70.5 451.0,68.5 456.4,67.3 461.7,66.8 467.1,66.4 472.5,64.8 477.9,62.2 483.2,60.3 488.6,59.6 494.0,59.4 499.3,58.9 504.7,59.6 510.1,60.1 515.4,58.7 520.8,57.3 526.2,57.2 531.5,54.2 536.9,50.1 542.3,49.6 547.7,46.4 553.0,46.5 558.4,45.2 563.8,45.0 569.1,43.3 574.5,42.1 579.9,40.1 585.2,39.1 590.6,38.9 596.0,38.5 601.3,39.4 606.7,38.6 612.1,40.6 617.4,39.4 622.8,39.4 628.2,39.7 633.6,39.7 638.9,39.0 644.3,38.2 649.7,37.2 655.0,37.8 660.4,37.7 665.8,36.1 671.1,34.0 676.5,30.9 681.9,29.3 687.2,26.9 692.6,28.3 698.0,25.9 703.4,25.5 708.7,25.4 714.1,23.9 719.5,24.5 724.8,23.1 730.2,22.4 735.6,22.5 740.9,22.9 746.3,20.2 751.7,17.2 757.0,14.1 762.4,12.4 767.8,14.8 773.2,11.7 778.5,8.7 783.9,10.2 789.3,4.3 794.6,4.3 800.0,0.0" fill="none" stroke="#4FD1C5" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
+      </svg>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="lbl">Net profit</div><div class="val" style="color:var(--cyan)">+$710,830</div></div>
+      <div class="stat-box"><div class="lbl">Win rate</div><div class="val">43.7%</div></div>
+      <div class="stat-box"><div class="lbl">Profit factor</div><div class="val">1.30</div></div>
+      <div class="stat-box"><div class="lbl">Max drawdown</div><div class="val">-$26,860</div></div>
+    </div>
+    <p class="field-hint">Based on 5080 completed trades from TradingView's Strategy Tester (List of Trades export).</p>
+
+    <p class="section-title">Live signal history</p>
+    <div class="panel feed-panel">
+      <div class="feed-row head"><span>Time</span><span>Strategy</span><span>Action</span><span>Symbol</span><span>Qty</span><span>Status</span></div>
+      <div id="log-rows"><div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Loading\u2026</span></div></div>
+    </div>
+  </div>
+
+  <script>
+    const BACKEND_URL = 'https://relay-backend-production-5260.up.railway.app';
+    const STRATEGY_ID = 'nq-markov';
+
+    function statusFor(entry) {
+      if (entry.forwarded && entry.forwarded.reason === 'trading paused') return { label: 'blocked \u2014 trading paused', cls: '' };
+      if (entry.forwarded && entry.forwarded.reason === 'strategy paused') return { label: 'blocked \u2014 strategy paused', cls: '' };
+      if (entry.forwarded && entry.forwarded.skipped) return { label: 'not forwarded', cls: '' };
+      if (entry.forwarded && entry.forwarded.status === 200) return { label: 'forwarded', cls: 'filled' };
+      if (entry.forwarded && entry.forwarded.error) return { label: 'error', cls: '' };
+      return { label: 'received', cls: '' };
+    }
+
+    async function loadSignals() {
+      const rowsEl = document.getElementById('log-rows');
+      try {
+        const res = await fetch(BACKEND_URL + '/signals');
+        if (!res.ok) throw new Error('backend returned ' + res.status);
+        const signals = (await res.json()).filter(s => s.strategyId === STRATEGY_ID);
+        if (!signals.length) {
+          rowsEl.innerHTML = '<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">No live signals from NQ-MARKOV yet.</span></div>';
+          return;
+        }
+        rowsEl.innerHTML = signals.map(s => {
+          const st = statusFor(s);
+          const time = s.receivedAt ? new Date(s.receivedAt).toLocaleString('en-GB', { hour12: false }) : '\u2014';
+          return '<div class="feed-row"><span class="feed-time">' + time + '</span><span>' + s.strategyId + '</span><span class="feed-action ' + s.action + '">' + s.action + '</span><span>' + s.symbol + '</span><span>' + (s.qty ?? '\u2014') + '</span><span class="feed-status ' + st.cls + '">' + st.label + '</span></div>';
+        }).join('');
+      } catch (err) {
+        rowsEl.innerHTML = '<div class="feed-row"><span class="field-hint" style="grid-column:1/-1;">Could not reach backend: ' + err.message + '</span></div>';
+      }
+    }
+    loadSignals();
+  </script>
+</body>
+</html>
