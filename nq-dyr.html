@@ -61,8 +61,8 @@
   .chart-slot { display: none; }
   .chart-slot.active { display: block; }
   .trades-panel { padding: 0; overflow: hidden; }
-  .trades-scroll { max-height: 520px; overflow-y: auto; }
-  table.trades-table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
+  .trades-scroll { max-height: 520px; overflow-y: auto; overflow-x: auto; }
+  table.trades-table { width: 100%; min-width: 720px; border-collapse: collapse; font-family: var(--mono); font-size: 12px; }
   table.trades-table thead th {
     position: sticky; top: 0; background: var(--bg-raised); color: var(--text-faint);
     text-transform: uppercase; letter-spacing: 0.06em; font-size: 10px; font-weight: 600;
