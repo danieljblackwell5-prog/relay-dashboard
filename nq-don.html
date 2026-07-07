@@ -7,44 +7,38 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap">
 <style>
   :root {
-    --bg-void: #0A0B0D;
-    --bg-panel: #14161A;
-    --bg-raised: #1C1F24;
-    --border-subtle: #262931;
-    --border-faint: #1E2126;
-    --amber: #FF9F1C;
-    --cyan: #4FD1C5;
-    --red: #FF5A5A;
-    --text-primary: #EDEBE6;
-    --text-dim: #7C828C;
-    --text-faint: #454951;
+    --bg-void: #0A0B0D; --bg-panel: #14161A; --bg-raised: #1C1F24;
+    --border-subtle: #262931; --border-faint: #1E2126;
+    --amber: #FF9F1C; --cyan: #4FD1C5; --red: #FF5A5A;
+    --text-primary: #EDEBE6; --text-dim: #7C828C; --text-faint: #454951;
     --mono: 'JetBrains Mono', 'SFMono-Regular', monospace;
     --sans: 'Inter', -apple-system, 'Segoe UI', sans-serif;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg-void); color: var(--text-primary); font-family: var(--sans); min-height: 100vh; }
   .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
-  .brand { display: flex; align-items: baseline; gap: 10px; }
   .brand .mark { font-family: var(--mono); font-weight: 700; font-size: 20px; letter-spacing: 0.02em; color: var(--text-primary); text-decoration: none; }
   .brand .mark span { color: var(--amber); }
-  .back-link { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-decoration: none; display: flex; align-items: center; gap: 6px; }
+  .back-link { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-decoration: none; }
   .back-link:hover { color: var(--text-primary); }
-  .wrap { max-width: 900px; margin: 0 auto; padding: 32px 28px 60px 28px; }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 32px 28px 60px 28px; }
   .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 8px 0; }
   .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 22px 24px; }
-  .head-row { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
-  .led { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; box-shadow: 0 0 0 0 rgba(79,209,197,.55); animation: pulse 2.4s infinite; }
+  .head-row { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+  .led { width: 9px; height: 9px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; animation: pulse 2.4s infinite; }
   @keyframes pulse { 0%{box-shadow:0 0 0 0 rgba(79,209,197,.55);} 70%{box-shadow:0 0 0 6px rgba(79,209,197,0);} 100%{box-shadow:0 0 0 0 rgba(79,209,197,0);} }
   .strat-title { font-family: var(--mono); font-size: 30px; font-weight: 700; }
+  .date-range { font-family: var(--mono); font-size: 12px; color: var(--text-dim); margin: 0 0 24px 27px; }
   .spec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .spec-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
   .spec-box .k { font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); margin-bottom: 6px; }
-  .spec-box .v { font-family: var(--mono); font-size: 15px; color: var(--text-primary); }
-  .section-title { font-family: var(--sans); font-weight: 700; font-size: 16px; margin: 32px 0 14px 0; color: var(--text-primary); }
+  .spec-box .v { font-family: var(--mono); font-size: 15px; }
+  .section-title { font-family: var(--sans); font-weight: 700; font-size: 16px; margin: 32px 0 14px 0; }
   .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 16px; }
   .stat-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
   .stat-box .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
-  .stat-box .val { font-family: var(--mono); font-size: 20px; }
+  .stat-box .val { font-family: var(--mono); font-size: 19px; }
+  .stat-box .sub { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 3px; }
   .field-hint { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 12px; }
   .feed-panel { padding: 0; overflow: hidden; }
   .feed-row { display: grid; grid-template-columns: 140px 100px 70px 90px 60px 1fr; gap: 10px; padding: 10px 18px; font-family: var(--mono); font-size: 12px; border-bottom: 1px solid var(--border-faint); align-items: center; }
@@ -70,6 +64,7 @@
       <span class="led"></span>
       <span class="strat-title">NQ-DON</span>
     </div>
+    <p class="date-range">Backtest: 2000-01-04 \u2014 2026-07-03 \u00b7 5564 trades</p>
 
     <div class="spec-grid">
       <div class="spec-box"><div class="k">Engine</div><div class="v">Donchian + Macro Filter</div></div>
@@ -78,19 +73,39 @@
       <div class="spec-box"><div class="k">Take profit</div><div class="v">3.7x ATR</div></div>
     </div>
 
-    <p class="eyebrow">Backtest performance</p>
+    <p class="eyebrow">Equity curve</p>
     <div class="panel">
-      <svg viewBox="0 0 800 130" preserveAspectRatio="none" style="width:100%; height:130px; display:block;">
-        <polyline points="0.0,130.0 5.4,127.9 10.7,126.8 16.1,124.7 21.5,123.7 26.8,123.8 32.2,123.5 37.6,123.5 43.0,121.7 48.3,122.4 53.7,122.1 59.1,121.1 64.4,121.4 69.8,121.7 75.2,122.9 80.5,123.1 85.9,123.5 91.3,123.5 96.6,122.1 102.0,120.8 107.4,120.0 112.8,119.4 118.1,118.1 123.5,116.5 128.9,117.0 134.2,116.6 139.6,117.1 145.0,117.4 150.3,118.1 155.7,118.8 161.1,117.5 166.4,117.1 171.8,116.6 177.2,115.5 182.6,115.0 187.9,114.5 193.3,113.2 198.7,112.6 204.0,111.6 209.4,110.6 214.8,109.9 220.1,109.7 225.5,109.4 230.9,108.9 236.2,108.3 241.6,108.9 247.0,108.8 252.3,109.0 257.7,108.1 263.1,108.7 268.5,106.9 273.8,105.3 279.2,103.1 284.6,102.5 289.9,102.9 295.3,103.0 300.7,101.8 306.0,100.8 311.4,101.1 316.8,99.9 322.1,98.5 327.5,97.7 332.9,97.1 338.3,96.2 343.6,95.3 349.0,96.3 354.4,96.5 359.7,94.8 365.1,93.2 370.5,93.3 375.8,92.6 381.2,91.2 386.6,89.7 391.9,90.0 397.3,90.5 402.7,88.8 408.1,88.7 413.4,86.6 418.8,86.1 424.2,85.4 429.5,85.4 434.9,84.9 440.3,83.4 445.6,83.6 451.0,82.6 456.4,81.1 461.7,78.7 467.1,77.8 472.5,77.5 477.9,77.2 483.2,74.9 488.6,73.8 494.0,71.4 499.3,71.5 504.7,71.6 510.1,71.8 515.4,72.2 520.8,69.4 526.2,71.0 531.5,70.7 536.9,70.0 542.3,67.7 547.7,68.3 553.0,66.5 558.4,64.1 563.8,63.2 569.1,63.1 574.5,61.3 579.9,60.9 585.2,59.3 590.6,58.5 596.0,56.8 601.3,56.4 606.7,55.9 612.1,52.8 617.4,51.7 622.8,51.3 628.2,48.9 633.6,47.9 638.9,46.0 644.3,42.7 649.7,42.0 655.0,39.1 660.4,38.3 665.8,35.1 671.1,32.9 676.5,31.2 681.9,29.6 687.2,28.7 692.6,28.7 698.0,29.4 703.4,28.4 708.7,27.2 714.1,25.8 719.5,26.6 724.8,26.4 730.2,25.8 735.6,26.7 740.9,25.2 746.3,25.2 751.7,23.1 757.0,22.4 762.4,17.7 767.8,15.3 773.2,13.0 778.5,12.7 783.9,8.7 789.3,6.7 794.6,4.1 800.0,0.0" fill="none" stroke="#4FD1C5" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round" />
-      </svg>
+      <svg viewBox="0 0 760 300" style="width:100%; height:auto; display:block;">
+      <line x1="70" y1="270.0" x2="750" y2="270.0" stroke="#1E2126" stroke-width="1" /><text x="62" y="274.0" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">-$500</text><line x1="70" y1="219.2" x2="750" y2="219.2" stroke="#1E2126" stroke-width="1" /><text x="62" y="223.2" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">$250K</text><line x1="70" y1="168.4" x2="750" y2="168.4" stroke="#1E2126" stroke-width="1" /><text x="62" y="172.4" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">$500K</text><line x1="70" y1="117.6" x2="750" y2="117.6" stroke="#1E2126" stroke-width="1" /><text x="62" y="121.6" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">$750K</text><line x1="70" y1="66.8" x2="750" y2="66.8" stroke="#1E2126" stroke-width="1" /><text x="62" y="70.8" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">$1M</text><line x1="70" y1="16.0" x2="750" y2="16.0" stroke="#1E2126" stroke-width="1" /><text x="62" y="20.0" text-anchor="end" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">$1.25M</text>
+      <line x1="70" y1="269.9" x2="750" y2="269.9" stroke="#454951" stroke-width="1" stroke-dasharray="3,3" />
+      <polyline points="70.0,270.0 73.4,267.1 76.8,265.2 80.3,263.1 83.7,260.8 87.1,259.5 90.5,258.4 93.9,257.9 97.3,258.8 100.8,258.2 104.2,257.6 107.6,255.6 111.0,256.8 114.4,255.7 117.8,256.0 121.3,255.3 124.7,255.1 128.1,256.0 131.5,255.9 134.9,257.5 138.3,258.0 141.8,258.6 145.2,259.8 148.6,257.6 152.0,256.2 155.4,254.2 158.8,254.1 162.3,253.3 165.7,251.6 169.1,250.2 172.5,248.3 175.9,246.7 179.3,247.6 182.8,247.3 186.2,247.2 189.6,247.8 193.0,248.1 196.4,249.7 199.8,249.7 203.3,250.5 206.7,248.4 210.1,248.0 213.5,248.1 216.9,245.8 220.4,244.8 223.8,243.8 227.2,244.5 230.6,242.8 234.0,240.9 237.4,240.3 240.9,238.8 244.3,236.9 247.7,236.5 251.1,235.9 254.5,234.0 257.9,234.2 261.4,234.3 264.8,233.5 268.2,232.6 271.6,232.5 275.0,233.5 278.4,233.4 281.9,233.3 285.3,234.4 288.7,232.0 292.1,233.4 295.5,230.9 298.9,228.5 302.4,227.2 305.8,224.2 309.2,223.5 312.6,221.4 316.0,223.1 319.4,223.9 322.9,222.7 326.3,221.1 329.7,219.4 333.1,219.0 336.5,217.6 339.9,217.7 343.4,215.6 346.8,214.3 350.2,213.9 353.6,211.8 357.0,211.5 360.5,210.1 363.9,212.5 367.3,211.0 370.7,212.0 374.1,209.4 377.5,209.3 381.0,206.5 384.4,206.6 387.8,205.4 391.2,203.6 394.6,202.2 398.0,200.3 401.5,200.3 404.9,201.3 408.3,201.2 411.7,198.7 415.1,198.7 418.5,197.3 422.0,194.9 425.4,194.1 428.8,193.1 432.2,193.2 435.6,191.9 439.0,192.0 442.5,189.3 445.9,188.8 449.3,190.1 452.7,188.0 456.1,186.6 459.5,183.0 463.0,180.3 466.4,179.7 469.8,179.8 473.2,178.9 476.6,178.8 480.1,174.7 483.5,172.6 486.9,171.8 490.3,168.7 493.7,168.8 497.1,168.7 500.6,170.9 504.0,169.2 507.4,170.0 510.8,166.8 514.2,166.2 517.6,168.2 521.1,167.4 524.5,165.7 527.9,162.8 531.3,162.2 534.7,163.2 538.1,160.3 541.6,158.4 545.0,155.7 548.4,154.5 551.8,153.2 555.2,152.0 558.6,149.7 562.1,150.4 565.5,148.3 568.9,145.8 572.3,143.2 575.7,143.3 579.1,143.4 582.6,142.4 586.0,141.2 589.4,136.4 592.8,135.0 596.2,136.6 599.6,134.6 603.1,129.7 606.5,129.8 609.9,128.2 613.3,123.9 616.7,119.0 620.2,115.7 623.6,116.8 627.0,111.4 630.4,111.4 633.8,109.2 637.2,102.1 640.7,99.3 644.1,99.1 647.5,97.3 650.9,95.4 654.3,94.7 657.7,94.8 661.2,95.4 664.6,95.7 668.0,92.6 671.4,92.2 674.8,88.7 678.2,92.2 681.7,91.2 685.1,90.9 688.5,91.3 691.9,90.1 695.3,90.4 698.7,88.6 702.2,88.8 705.6,87.0 709.0,83.9 712.4,83.8 715.8,76.9 719.2,73.9 722.7,69.6 726.1,67.6 729.5,69.0 732.9,63.7 736.3,60.3 739.7,56.7 743.2,55.1 746.6,50.0 750.0,45.1" fill="none" stroke="#4FD1C5" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" />
+      <line x1="70" y1="16" x2="70" y2="270" stroke="#262931" stroke-width="1" />
+      <text x="70.0" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2000</text><text x="199.8" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2005</text><text x="312.6" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2010</text><text x="463.0" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2015</text><text x="616.7" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2020</text><text x="709.0" y="292" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#7C828C">2025</text>
+    </svg>
+    </div>
+
+    <p class="section-title">Overall performance</p>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="lbl">Net profit</div><div class="val" style="color:var(--cyan)">+$1,106,670</div><div class="sub">+110.67%</div></div>
+      <div class="stat-box"><div class="lbl">Win rate</div><div class="val">44.8%</div><div class="sub">5564 trades</div></div>
+      <div class="stat-box"><div class="lbl">Profit factor</div><div class="val">1.38</div></div>
+      <div class="stat-box"><div class="lbl">Max drawdown</div><div class="val" style="color:var(--red)">-$31,115</div><div class="sub">-3.11%</div></div>
+    </div>
+
+    <p class="section-title">Trade breakdown</p>
+    <div class="stat-grid">
+      <div class="stat-box"><div class="lbl">Avg win</div><div class="val" style="color:var(--cyan)">+$1,613</div></div>
+      <div class="stat-box"><div class="lbl">Avg loss</div><div class="val" style="color:var(--red)">-$1,213</div></div>
+      <div class="stat-box"><div class="lbl">Largest win</div><div class="val" style="color:var(--cyan)">+$21,190</div></div>
+      <div class="stat-box"><div class="lbl">Largest loss</div><div class="val" style="color:var(--red)">-$12,270</div></div>
     </div>
     <div class="stat-grid">
-      <div class="stat-box"><div class="lbl">Net profit</div><div class="val" style="color:var(--cyan)">+$1,106,670</div></div>
-      <div class="stat-box"><div class="lbl">Win rate</div><div class="val">44.8%</div></div>
-      <div class="stat-box"><div class="lbl">Profit factor</div><div class="val">1.38</div></div>
-      <div class="stat-box"><div class="lbl">Max drawdown</div><div class="val">-$31,115</div></div>
+      <div class="stat-box"><div class="lbl">Avg trade duration</div><div class="val">21.9 bars</div></div>
+      <div class="stat-box"><div class="lbl">Avg favorable excursion</div><div class="val">+$1,348</div></div>
+      <div class="stat-box"><div class="lbl">Avg adverse excursion</div><div class="val">-$930</div></div>
+      <div class="stat-box"><div class="lbl">Avg return per trade</div><div class="val">+0.02%</div></div>
     </div>
-    <p class="field-hint">Based on 5564 completed trades from TradingView's Strategy Tester (List of Trades export).</p>
+    <p class="field-hint">All figures calculated from TradingView's Strategy Tester "List of Trades" export, filtered to one row per completed trade.</p>
 
     <p class="section-title">Live signal history</p>
     <div class="panel feed-panel">
