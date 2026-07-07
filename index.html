@@ -33,7 +33,7 @@
   #relay-root *, #relay-root *::before, #relay-root *::after { box-sizing: border-box; }
   #relay-root .mono { font-family: var(--mono); }
   #relay-root .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-dim); margin: 0 0 6px 0; }
-  #relay-root .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 22px 24px; }
+  #relay-root .panel { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 22px 24px; }
 
   /* ---------- header ---------- */
   #relay-root .topbar { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--border-subtle); background: linear-gradient(180deg, #101216 0%, var(--bg-void) 100%); }
@@ -94,7 +94,7 @@
 
   /* ---------- strategies ---------- */
   #relay-root .strat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-  #relay-root .strat-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
+  #relay-root .strat-card { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
   #relay-root .strat-card.pending { opacity: 0.5; }
   #relay-root .strat-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   #relay-root .strat-name { font-family: var(--mono); font-size: 13px; font-weight: 600; }
@@ -113,7 +113,7 @@
 
   /* ---------- risk (compact, inline, global only) ---------- */
   #relay-root .risk-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 4px; }
-  #relay-root .risk-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 3px; padding: 14px 16px; }
+  #relay-root .risk-box { background: var(--bg-panel); border: 1px solid var(--border-subtle); border-radius: 6px; padding: 14px 16px; }
   #relay-root .risk-box .lbl { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); margin-bottom: 8px; }
   #relay-root .risk-input-row { display: flex; align-items: baseline; gap: 6px; }
   #relay-root .risk-input {
@@ -128,7 +128,7 @@
   #relay-root .kill-mini { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-size: 12px; color: var(--text-dim); }
   #relay-root .save-msg { font-family: var(--mono); font-size: 12px; color: var(--cyan); opacity: 0; transition: opacity 0.3s; }
   #relay-root .save-msg.show { opacity: 1; }
-  #relay-root .btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--amber); color: #171000; border: none; padding: 8px 16px; border-radius: 3px; cursor: pointer; font-weight: 700; }
+  #relay-root .btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; background: var(--amber); color: #171000; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 700; }
   #relay-root .btn:hover { filter: brightness(1.08); }
 
   /* ---------- feed ---------- */
@@ -219,8 +219,8 @@
     <div class="topbar">
       <div class="brand"><span class="mark">RE<span>LAY</span></span><span class="sub">FTMO \u00b7 MT5 Bridge</span></div>
       <div class="topbar-right">
-        <div class="status-chip"><span class="led"></span>MT5 Connected</div>
-        <div class="status-chip"><span class="led amber"></span>4 / 14 Strategies Live</div>
+        <div class="status-chip"><span class="led grey" id="backend-led"></span><span id="backend-status-text">Checking backend\u2026</span></div>
+        <div class="status-chip"><span class="led amber"></span><span id="live-count-text">4 / 14 Strategies Live</span></div>
         <div class="clock mono" id="clock">--:--:--</div>
       </div>
     </div>
@@ -236,7 +236,10 @@
 
       <div class="wrap">
         <section id="sec-overview">
-          <p class="eyebrow">Account performance <span style="color:var(--text-faint); text-transform:none; letter-spacing:0;">— sample data, not yet connected to your real MT5 account</span></p>
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom:2px;">
+            <p class="eyebrow" style="margin:0;">Account performance</p>
+            <span style="font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--amber); background:rgba(255,159,28,0.1); border:1px solid rgba(255,159,28,0.3); padding:2px 8px; border-radius:20px;">SAMPLE DATA</span>
+          </div>
           <div class="hero">
             <div class="panel">
               <p class="eyebrow" style="margin-bottom:2px;">Today's P&amp;L</p>
@@ -273,7 +276,7 @@
         <section id="sec-strategies">
           <div class="section-head">
             <h2 class="section-title">Strategies</h2>
-            <span class="section-meta">4 live \u00b7 10 not connected</span>
+            <span class="section-meta" id="strategies-count-meta">4 live \u00b7 10 not connected</span>
           </div>
           <div class="strat-grid">${stratCards}</div>
         </section>
@@ -283,6 +286,7 @@
             <h2 class="section-title">Backtest</h2>
             <span class="section-meta" id="backtest-updated">No data uploaded yet</span>
           </div>
+          <p class="field-hint" style="margin-top:-8px; margin-bottom:16px;">Quick preview for strategies without a dedicated page yet. NQ-DON, NQ-DYR, NQ-ALPHA, and NQ-MARKOV have full backtest pages \u2014 click their card above instead for the complete view with trade-by-trade history.</p>
           <div class="panel" style="margin-bottom:16px;">
             <div class="field-row" style="border-bottom:none; padding:0;">
               <div>
@@ -403,9 +407,35 @@
 
   root.querySelector('#save-risk').addEventListener('click', saveRisk);
 
+  async function checkBackendHealth() {
+    const led = root.querySelector('#backend-led');
+    const text = root.querySelector('#backend-status-text');
+    try {
+      const res = await fetch(BACKEND_URL + '/');
+      if (!res.ok) throw new Error('bad status');
+      led.classList.remove('grey');
+      text.textContent = 'Backend online';
+    } catch (err) {
+      led.classList.add('grey');
+      text.textContent = 'Backend unreachable';
+    }
+  }
+
+  function updateLiveCountDisplay() {
+    const liveCount = strategies.filter(s => s.status === 'live').length;
+    const total = strategies.length;
+    const topbarEl = root.querySelector('#live-count-text');
+    const sectionEl = root.querySelector('#strategies-count-meta');
+    if (topbarEl) topbarEl.textContent = `${liveCount} / ${total} Strategies Live`;
+    if (sectionEl) sectionEl.textContent = `${liveCount} live \u00b7 ${total - liveCount} not connected`;
+  }
+
   loadRisk();
   loadSignals();
   wireStrategyToggles();
+  checkBackendHealth();
+  updateLiveCountDisplay();
+  setInterval(checkBackendHealth, 20000);
   // refresh the signal log periodically so new real trades show up without a manual reload
   setInterval(loadSignals, 15000);
 
@@ -532,11 +562,14 @@
         } catch (err) {
           console.warn('Could not save strategy override:', err.message);
         }
+        const strat = strategies.find(s => s.id === id);
+        if (strat) strat.status = toggle.checked ? 'live' : 'pending';
         if (statusEl) {
           statusEl.textContent = toggle.checked ? 'Live' : 'Paused';
           statusEl.style.color = toggle.checked ? '#4FD1C5' : '#454951';
         }
         if (cardEl) cardEl.classList.toggle('pending', !toggle.checked);
+        updateLiveCountDisplay();
       });
     });
   }
