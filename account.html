@@ -72,29 +72,34 @@
     <div class="wrap">
       <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
         <p class="eyebrow" style="margin:0;">Account</p>
-        <span style="font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--text-faint); background:var(--bg-raised); border:1px solid var(--border-subtle); padding:2px 8px; border-radius:20px;">NOT CONNECTED</span>
+        <span id="acct-status-badge" style="font-family:var(--mono); font-size:10px; letter-spacing:0.04em; color:var(--text-faint); background:var(--bg-raised); border:1px solid var(--border-subtle); padding:2px 8px; border-radius:20px;">NOT CONNECTED</span>
       </div>
       <p class="field-hint" style="margin-bottom:24px; font-size:12px;">Connect your MT5/FTMO account so RELAY can pull real equity, P&amp;L, and open positions instead of sample data. This form isn't wired up to anything yet \u2014 it's here so the layout's in place before the real connection is built.</p>
 
       <div class="panel" style="max-width:520px;">
         <div style="margin-bottom:16px;">
           <div class="field-label" style="margin-bottom:6px;">Broker</div>
-          <input class="field-input" style="width:100%;" type="text" placeholder="e.g. FTMO" disabled />
+          <input class="field-input" id="acct-broker" style="width:100%;" type="text" placeholder="e.g. FTMO" />
         </div>
         <div style="margin-bottom:16px;">
           <div class="field-label" style="margin-bottom:6px;">MT5 login</div>
-          <input class="field-input" style="width:100%;" type="text" placeholder="Account number" disabled />
+          <input class="field-input" id="acct-login" style="width:100%;" type="text" placeholder="Account number" />
         </div>
         <div style="margin-bottom:16px;">
           <div class="field-label" style="margin-bottom:6px;">Password</div>
-          <input class="field-input" style="width:100%;" type="password" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" disabled />
+          <input class="field-input" id="acct-password" style="width:100%;" type="password" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" />
         </div>
         <div style="margin-bottom:20px;">
           <div class="field-label" style="margin-bottom:6px;">Server</div>
-          <input class="field-input" style="width:100%;" type="text" placeholder="e.g. FTMO-Server3" disabled />
+          <input class="field-input" id="acct-server" style="width:100%;" type="text" placeholder="e.g. FTMO-Server3" />
         </div>
         <button class="btn" id="connect-account-btn" style="width:100%;">Connect account</button>
         <p class="field-hint" id="connect-account-msg" style="margin-top:12px; display:none;"></p>
+      </div>
+
+      <div class="panel" id="live-summary-panel" style="max-width:520px; margin-top:20px; display:none;">
+        <div class="field-label" style="margin-bottom:14px;">Live account summary</div>
+        <div id="live-summary-body" class="field-hint">Loading\u2026</div>
       </div>
     </div>
   </div>
@@ -125,11 +130,94 @@
     checkBackendHealth();
     setInterval(checkBackendHealth, 20000);
 
-    document.getElementById('connect-account-btn').addEventListener('click', () => {
+    function fmtMoney(n) {
+      if (n == null) return '\u2014';
+      const sign = n >= 0 ? '+' : '-';
+      return sign + '$' + Math.abs(n).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtPlainMoney(n) {
+      if (n == null) return '\u2014';
+      return '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    async function refreshAccountStatus() {
+      const badge = document.getElementById('acct-status-badge');
+      try {
+        const res = await fetch(BACKEND_URL + '/account/status');
+        const data = await res.json();
+        if (data.connected) {
+          badge.textContent = 'CONNECTED \u2014 ' + data.login + ' @ ' + data.server;
+          badge.style.color = 'var(--cyan)';
+          badge.style.borderColor = 'rgba(79,209,197,0.4)';
+          document.getElementById('live-summary-panel').style.display = 'block';
+          refreshLiveSummary();
+        }
+      } catch (err) {
+        // backend unreachable — leave badge as-is, health chip already shows this
+      }
+    }
+
+    async function refreshLiveSummary() {
+      const body = document.getElementById('live-summary-body');
+      try {
+        const res = await fetch(BACKEND_URL + '/account/summary');
+        const data = await res.json();
+        if (data.status === 'provisioning' || data.status === 'connecting') {
+          body.innerHTML = 'Account is still connecting on MetaApi\u2019s side \u2014 this can take a minute or two the first time. Checking again shortly\u2026';
+          setTimeout(refreshLiveSummary, 8000);
+          return;
+        }
+        if (data.status === 'error' || data.error) {
+          body.innerHTML = '<span style="color:var(--red)">Could not read account: ' + (data.error || 'unknown error') + '</span>';
+          return;
+        }
+        body.innerHTML =
+          'Balance: <b style="color:var(--text-primary)">' + fmtPlainMoney(data.balance) + '</b><br>' +
+          'Equity: <b style="color:var(--text-primary)">' + fmtPlainMoney(data.equity) + '</b><br>' +
+          'Open P&amp;L: <b style="color:' + (data.profit >= 0 ? 'var(--cyan)' : 'var(--red)') + '">' + fmtMoney(data.profit) + '</b><br>' +
+          'Leverage: <b style="color:var(--text-primary)">1:' + data.leverage + '</b>';
+      } catch (err) {
+        body.innerHTML = '<span style="color:var(--red)">Could not reach backend.</span>';
+      }
+    }
+
+    refreshAccountStatus();
+
+    document.getElementById('connect-account-btn').addEventListener('click', async () => {
       const msg = document.getElementById('connect-account-msg');
-      msg.textContent = 'Not wired up yet \u2014 this will securely connect to MetaApi once built. Nothing was sent anywhere.';
+      const broker = document.getElementById('acct-broker').value.trim();
+      const login = document.getElementById('acct-login').value.trim();
+      const password = document.getElementById('acct-password').value;
+      const server = document.getElementById('acct-server').value.trim();
+
+      if (!login || !password || !server) {
+        msg.textContent = 'Please fill in login, password, and server at minimum.';
+        msg.style.color = 'var(--red)';
+        msg.style.display = 'block';
+        return;
+      }
+
+      msg.textContent = 'Connecting\u2026 this can take a moment.';
+      msg.style.color = 'var(--text-dim)';
       msg.style.display = 'block';
-      msg.style.color = 'var(--amber)';
+
+      try {
+        const res = await fetch(BACKEND_URL + '/account/connect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ broker, login, password, server }),
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'connection failed');
+
+        document.getElementById('acct-password').value = '';
+        msg.textContent = 'Connected \u2014 MetaApi is provisioning the account now. This page will update automatically as it comes online.';
+        msg.style.color = 'var(--cyan)';
+        refreshAccountStatus();
+      } catch (err) {
+        msg.textContent = 'Failed to connect: ' + err.message;
+        msg.style.color = 'var(--red)';
+      }
     });
   </script>
 </body>
